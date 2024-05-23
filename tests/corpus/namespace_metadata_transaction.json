@@ -1,0 +1,30 @@
+{
+    "common_txn_header": {
+        "transactionHash": "49d6e1ce276a85b70eafe52349aacca389302e7a9754bcf1221e79494fc665a4",
+        "version": 1,
+        "networkType": 152,
+        "transactionType": "AGGREGATE_COMPLETE",
+        "maxFee": 296000,
+        "deadline": 32335182767
+    },
+    "fields": {
+        "transactionHash": "668fe1351ac31c35536ee3a368f2c2310dd3d7e67a8345050548ae8b6596015d",
+        "transactions": [
+            {
+                "inner_tx_header": {
+                    "signerPublicKey": "17140d44583c4bad44c0a9db963e315e1c425a7495271738b8f81938dde75c40",
+                    "version": 1,
+                    "networkType": 152,
+                    "transactionType": "NAMESPACE_METADATA"
+                },
+                "fields": {
+                    "address": "98f2a5e8e063ad1a9085ef5b5167e2f1a5645c48fa2c0249",
+                    "metadataKey": 11421849911679556973,
+                    "mosaicNamespaceId": 9603735507850504918,
+                    "valueSizeDelta": 30,
+                    "value": "4e616d657370616365206d657461646174612076616c7565206669656c64"
+                }
+            }
+        ]
+    }
+}

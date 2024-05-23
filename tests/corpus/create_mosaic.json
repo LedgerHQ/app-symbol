@@ -1,0 +1,43 @@
+{
+    "common_txn_header": {
+        "transactionHash": "49d6e1ce276a85b70eafe52349aacca389302e7a9754bcf1221e79494fc665a4",
+        "version": 1,
+        "networkType": 152,
+        "transactionType": "AGGREGATE_COMPLETE",
+        "maxFee": 2000000,
+        "deadline": 26735656441
+    },
+    "fields": {
+        "transactionHash": "e5f37fe3f83f4f0a2f21e7cf25f75cf29a20d7929cbeb7eb552eda846969281f",
+        "transactions": [
+            {
+                "inner_tx_header": {
+                    "signerPublicKey": "17140d44583c4bad44c0a9db963e315e1c425a7495271738b8f81938dde75c40",
+                    "version": 1,
+                    "networkType": 152,
+                    "transactionType": "MOSAIC_DEFINITION"
+                },
+                "fields": {
+                    "mosaicId": 5993367664876004465,
+                    "duration": 10,
+                    "nonce": 1141759978,
+                    "flag": 7,
+                    "divisibility": 0
+                }
+            },
+            {
+                "inner_tx_header": {
+                    "signerPublicKey": "17140d44583c4bad44c0a9db963e315e1c425a7495271738b8f81938dde75c40",
+                    "version": 1,
+                    "networkType": 152,
+                    "transactionType": "MOSAIC_SUPPLY_CHANGE"
+                },
+                "fields": {
+                    "mosaicId": 5993367664876004465,
+                    "amount": 1000000,
+                    "action": 1
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "common_txn_header": {
+        "transactionHash": "3b5e1fa6445653c971a50687e75e6d09fb30481055e3990c84b25e9222dc1155",
+        "version": 1,
+        "networkType": 152,
+        "transactionType": "MOSAIC_ALIAS",
+        "maxFee": 2000000,
+        "deadline": 26735956123
+    },
+    "fields": {
+        "namespaceId": 9415287034144014420,
+        "mosaicId": 8997975526760792268,
+        "aliasAction": 0
+    }
+}

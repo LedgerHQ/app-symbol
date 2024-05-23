@@ -1,6 +1,13 @@
 name: Compilation & tests
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - main
+      - develop
+  pull_request:
 
 jobs:
   job_build_debug:
@@ -8,42 +15,21 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder-lite:latest
 
     steps:
       - name: Clone
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build
         run: |
           make DEBUG=1
 
       - name: Upload app binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: app-debug
           path: bin
-
-  job_scan_build:
-    name: Clang Static Analyzer
-    needs: job_build_debug
-    runs-on: ubuntu-latest
-
-    container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Build with Clang Static Analyzer
-        run: |
-          make clean
-          scan-build --use-cc=clang -analyze-headers -enable-checker security -enable-checker unix -enable-checker valist -o scan-build --status-bugs make default
-      - uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: scan-build
-          path: scan-build
 
   job_coverity_scan:
     name: Coverity Scan
@@ -54,7 +40,7 @@ jobs:
       image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-scanner:latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Build with cov-build
         run: |

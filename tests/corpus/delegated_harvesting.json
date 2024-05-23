@@ -1,0 +1,51 @@
+{
+    "common_txn_header": {
+        "transactionHash": "49d6e1ce276a85b70eafe52349aacca389302e7a9754bcf1221e79494fc665a4",
+        "version": 1,
+        "networkType": 152,
+        "transactionType": "AGGREGATE_COMPLETE",
+        "maxFee": 43200,
+        "deadline": 35098015682
+    },
+    "fields": {
+        "transactionHash": "0c8666cef61f61b78515149a1414455c77a0ccd7c9ad5f39dfe46761ab6556df",
+        "transactions": [
+            {
+                "inner_tx_header": {
+                    "signerPublicKey": "17140d44583c4bad44c0a9db963e315e1c425a7495271738b8f81938dde75c40",
+                    "version": 1,
+                    "networkType": 152,
+                    "transactionType": "ACCOUNT_KEY_LINK"
+                },
+                "fields": {
+                    "linkedPublicKey": "00278c080d6b149902e1576723da6362065d3a134bee6383827353540492b911",
+                    "linkAction": 1
+                }
+            },
+            {
+                "inner_tx_header": {
+                    "signerPublicKey": "17140d44583c4bad44c0a9db963e315e1c425a7495271738b8f81938dde75c40",
+                    "version": 1,
+                    "networkType": 152,
+                    "transactionType": "VRF_KEY_LINK"
+                },
+                "fields": {
+                    "linkedPublicKey": "c1a71431325873d83894977c68c783a4eed7a3391eafd704bf8500361ec321db",
+                    "linkAction": 1
+                }
+            },
+            {
+                "inner_tx_header": {
+                    "signerPublicKey": "17140d44583c4bad44c0a9db963e315e1c425a7495271738b8f81938dde75c40",
+                    "version": 1,
+                    "networkType": 152,
+                    "transactionType": "NODE_KEY_LINK"
+                },
+                "fields": {
+                    "linkedPublicKey": "81890592f960aaebda7612c8917fa9c267a845d78d74d4b3651af093e6775001",
+                    "linkAction": 1
+                }
+            }
+        ]
+    }
+}

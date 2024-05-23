@@ -1,0 +1,17 @@
+{
+    "common_txn_header": {
+        "transactionHash": "3b5e1fa6445653c971a50687e75e6d09fb30481055e3990c84b25e9222dc1155",
+        "version": 1,
+        "networkType": 152,
+        "transactionType": "ACCOUNT_MOSAIC_RESTRICTION",
+        "maxFee": 144000,
+        "deadline": 36227247455
+    },
+    "fields": {
+        "restrictionFlags": 32770,
+        "restrictionAdditions": [
+            6602860368453388476
+        ],
+        "restrictionDeletions": []
+    }
+}

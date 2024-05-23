@@ -20,6 +20,7 @@
 #include "global.h"
 #include "xym/xym_helpers.h"
 #include "ui/main/idle_menu.h"
+#include "ui/transaction/review_menu.h"
 #include "transaction/transaction.h"
 #include "printers.h"
 #include "io.h"
@@ -87,8 +88,7 @@ void sign_transaction()
     io_send_response( &response, OK );
     explicit_bzero( signature,   sizeof(signature)  );
 
-    // Display back the original UX
-    display_idle_menu();
+    display_review_done(true);
 }
 
 void reject_transaction() 
@@ -103,8 +103,7 @@ void reject_transaction()
     // notify of rejected transaction
     handle_error( TRANSACTION_REJECTED );
 
-    // display the idle menu
-    display_idle_menu();
+    display_review_done(false);
 }
 
 bool isFirst(uint8_t p1) 

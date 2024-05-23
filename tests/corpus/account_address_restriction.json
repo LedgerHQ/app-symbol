@@ -1,0 +1,17 @@
+{
+    "common_txn_header": {
+        "transactionHash": "3b5e1fa6445653c971a50687e75e6d09fb30481055e3990c84b25e9222dc1155",
+        "version": 1,
+        "networkType": 152,
+        "transactionType": "ACCOUNT_ADDRESS_RESTRICTION",
+        "maxFee": 160000,
+        "deadline": 35807404241
+    },
+    "fields": {
+        "restrictionFlags": 32769,
+        "restrictionAdditions": [
+            "98f2a5e8e063ad1a9085ef5b5167e2f1a5645c48fa2c0249"
+        ],
+        "restrictionDeletions": []
+    }
+}

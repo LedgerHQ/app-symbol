@@ -1,0 +1,15 @@
+{
+    "common_txn_header": {
+        "transactionHash": "3b5e1fa6445653c971a50687e75e6d09fb30481055e3990c84b25e9222dc1155",
+        "version": 1,
+        "networkType": 152,
+        "transactionType": "ADDRESS_ALIAS",
+        "maxFee": 2000000,
+        "deadline": 26736012201
+    },
+    "fields": {
+        "namespaceId": 9415287034144014420,
+        "address": "98f2a5e8e063ad1a9085ef5b5167e2f1a5645c48fa2c0249",
+        "aliasAction": 1
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "common_txn_header": {
+        "transactionHash": "3b5e1fa6445653c971a50687e75e6d09fb30481055e3990c84b25e9222dc1155",
+        "version": 1,
+        "networkType": 152,
+        "transactionType": "FUND_LOCK",
+        "maxFee": 2000000,
+        "deadline": 26736167893
+    },
+    "fields": {
+        "mosaicId": 5884392889701778856,
+        "amount": 10000000,
+        "blockDuration": 480,
+        "aggregateBondedHash": "2b51ebcbc3e40efe8af68a0408f5a72474b1327a64e3e3b47d9b139230c7833b"
+    }
+}

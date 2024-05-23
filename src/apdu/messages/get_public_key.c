@@ -56,7 +56,8 @@ int send_public_key()
 void on_address_confirmed() 
 {
     send_public_key();
-    display_idle_menu();
+
+    display_address_confirmation_done(true);
 }
 
 
@@ -66,7 +67,8 @@ void on_address_confirmed()
 void on_address_rejected() 
 {
     io_send_error(ADDRESS_REJECTED);
-    display_idle_menu();
+
+    display_address_confirmation_done(false);
 }
 
 

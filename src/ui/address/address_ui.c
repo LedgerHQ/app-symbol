@@ -22,12 +22,20 @@
 #include "ui/main/idle_menu.h"
 #include "xym/xym_helpers.h"
 #include "glyphs.h"
+#ifdef HAVE_NBGL
+#include "nbgl_use_case.h"
+#endif
 
+#ifdef HAVE_BAGL
 extern char fieldValue[MAX_FIELD_LEN];
+#else
+static char fieldValue[MAX_FIELD_LEN];
+#endif
 
 action_t approval_action;
 action_t rejection_action;
 
+#ifdef HAVE_BAGL
 UX_STEP_NOCB(
         ux_display_address_flow_1_step,
         pnn,
@@ -69,6 +77,26 @@ UX_FLOW(ux_display_address_flow,
        &ux_display_address_flow_3_step,
        &ux_display_address_flow_4_step
 );
+#else // HAVE_BAGL
+
+static void address_verification_cancelled(void) {
+    rejection_action();
+}
+
+static void display_address_callback(bool confirm) {
+    if (confirm) {
+        approval_action();
+    } else {
+        address_verification_cancelled();
+    }
+}
+
+// called when tapping on review start page to actually display address
+static void display_addr(void) {
+    nbgl_useCaseAddressConfirmation(fieldValue,
+                                    &display_address_callback);
+}
+#endif // HAVE_BAGL
 
 void display_address_confirmation_ui(char* address, action_t onApprove, action_t onReject) {
     approval_action = onApprove;
@@ -76,5 +104,26 @@ void display_address_confirmation_ui(char* address, action_t onApprove, action_t
 
     explicit_bzero(fieldValue, MAX_FIELD_LEN);
     strncpy(fieldValue, address, XYM_PRETTY_ADDRESS_LENGTH);
+
+#ifdef HAVE_BAGL
     ux_flow_init(0, ux_display_address_flow, NULL);
+#else
+    nbgl_useCaseReviewStart(&C_stax_app_symbol_64px,
+                            "Verify Symbol\n Address", NULL, "Cancel",
+                            display_addr, address_verification_cancelled);
+#endif
+}
+
+void display_address_confirmation_done(bool validated) {
+#ifdef HAVE_BAGL
+    UNUSED(validated);
+    // Display back the original UX
+    display_idle_menu();
+#else // HAVE_BAGL
+    if (validated) {
+        nbgl_useCaseStatus("ADDRESS\nVERIFIED", true, display_idle_menu);
+    } else {
+        nbgl_useCaseStatus("Address verification\ncancelled", false, display_idle_menu);
+    }
+#endif // HAVE_BAGL
 }

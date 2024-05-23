@@ -19,16 +19,22 @@
 #include <os_io_seproxyhal.h>
 #include <ux.h>
 #include "common.h"
+#include "ui/main/idle_menu.h"
 #include "xym/format/readers.h"
 #include "xym/format/fields.h"
 #include "xym/format/format.h"
 #include "glyphs.h"
 
+#ifdef HAVE_NBGL
+#include "nbgl_use_case.h"
+#endif
+
+result_action_t approval_menu_callback;
+static fields_array_t* fields;
+
+#ifdef HAVE_BAGL
 char fieldName[MAX_FIELDNAME_LEN];
 char fieldValue[MAX_FIELD_LEN];
-
-static fields_array_t* fields;
-result_action_t approval_menu_callback;
 
 const ux_flow_step_t* ux_review_flow[MAX_FIELD_COUNT + 3];
 
@@ -82,10 +88,81 @@ static void update_content(int stackSlot) {
 #endif
 }
 
+#else // HAVE_BAGL
+
+static nbgl_layoutTagValue_t pair;
+static nbgl_layoutTagValueList_t pairList = {0};
+static nbgl_pageInfoLongPress_t infoLongPress;
+
+#define MAX_TAG_VALUE_PAIRS_DISPLAYED 4
+
+typedef struct review_argument_t {
+    char name[MAX_FIELDNAME_LEN];
+    char value[MAX_FIELD_LEN];
+} review_argument_t;
+
+static review_argument_t bkp_args[MAX_TAG_VALUE_PAIRS_DISPLAYED];
+
+static void transaction_rejected(void) {
+    approval_menu_callback(OPTION_REJECT);
+}
+
+static void reject_confirmation(void) {
+    nbgl_useCaseConfirm("Reject transaction?", NULL, "Yes, Reject", "Go back to transaction", transaction_rejected);
+}
+
+// called when long press button on 3rd page is long-touched or when reject footer is touched
+static void review_choice(bool confirm) {
+    if (confirm) {
+        approval_menu_callback(OPTION_SIGN);
+    } else {
+        reject_confirmation();
+    }
+}
+
+// function called by NBGL to get the pair indexed by "index"
+static nbgl_layoutTagValue_t* get_review_pair(uint8_t index) {
+    const field_t *field = &fields->arr[index];
+
+    // Backup review argument as MAX_TAG_VALUE_PAIRS_DISPLAYED can be displayed
+    // simultaneously and their content must be store on app side buffer as
+    // only the buffer pointer is copied by the SDK and not the buffer content.
+    uint8_t bkp_index = index % MAX_TAG_VALUE_PAIRS_DISPLAYED;
+
+    resolve_fieldname(field, bkp_args[bkp_index].name);
+    format_field(field, bkp_args[bkp_index].value);
+
+    pair.item = bkp_args[bkp_index].name;
+    pair.value = bkp_args[bkp_index].value;
+
+#ifdef HAVE_PRINTF
+    PRINTF("\nPair %d - Title: %s - Value: %s\n", index, pair.item, pair.value);
+#endif
+
+    return &pair;
+}
+
+static void review_continue(void) {
+    pairList.nbMaxLinesForValue = 0;
+    pairList.nbPairs = fields->numFields;
+    pairList.pairs = NULL; // to indicate that callback should be used
+    pairList.callback = get_review_pair;
+    pairList.startIndex = 0;
+
+    infoLongPress.icon = &C_stax_app_symbol_64px;
+    infoLongPress.text = "Sign transaction";
+    infoLongPress.longPressText = "Hold to sign";
+
+    nbgl_useCaseStaticReview(&pairList, &infoLongPress, "Reject transaction", review_choice);
+}
+
+#endif // HAVE_BAGL
+
 void display_review_menu(fields_array_t *transactionParam, result_action_t callback) {
     fields = transactionParam;
     approval_menu_callback = callback;
 
+#ifdef HAVE_BAGL
     for (int i = 0; i < fields->numFields; ++i) {
         ux_review_flow[i] = &ux_review_flow_step;
     }
@@ -95,4 +172,26 @@ void display_review_menu(fields_array_t *transactionParam, result_action_t callb
     ux_review_flow[fields->numFields + 2] = FLOW_END_STEP;
 
     ux_flow_init(0, ux_review_flow, NULL);
+#else // HAVE_BAGL
+    nbgl_useCaseReviewStart(&C_stax_app_symbol_64px,
+                            "Review transaction",
+                            NULL,
+                            "Reject transaction",
+                            review_continue,
+                            reject_confirmation);
+#endif // HAVE_BAGL
+}
+
+void display_review_done(bool validated) {
+#ifdef HAVE_BAGL
+    UNUSED(validated);
+    // Display back the original UX
+    display_idle_menu();
+#else // HAVE_BAGL
+    if (validated) {
+        nbgl_useCaseStatus("TRANSACTION\nSIGNED", true, display_idle_menu);
+    } else {
+        nbgl_useCaseStatus("Transaction rejected", false, display_idle_menu);
+    }
+#endif // HAVE_BAGL
 }

@@ -1,0 +1,32 @@
+{
+    "common_txn_header": {
+        "transactionHash": "49d6e1ce276a85b70eafe52349aacca389302e7a9754bcf1221e79494fc665a4",
+        "version": 1,
+        "networkType": 152,
+        "transactionType": "AGGREGATE_BONDED",
+        "maxFee": 2000000,
+        "deadline": 27273426551
+    },
+    "fields": {
+        "transactionHash": "043d6f6e851cae4ed2b975aeef61dfdf00b85bbb2503ac23dd7586e3c0b07956",
+        "transactions": [
+            {
+                "inner_tx_header": {
+                    "signerPublicKey": "17140d44583c4bad44c0a9db963e315e1c425a7495271738b8f81938dde75c40",
+                    "version": 1,
+                    "networkType": 152,
+                    "transactionType": "MODIFY_MULTISIG_ACCOUNT"
+                },
+                "fields": {
+                    "minRemovalDelta": 1,
+                    "minApprovalDelta": 1,
+                    "addressAdditions": [
+                        "9817259a942f6ae0ea32b01e368687405536e61125ecf701",
+                        "984b730ea3b726cc12a9faf78b4d37354ff8722dbb950137"
+                    ],
+                    "addressDeletions": []
+                }
+            }
+        ]
+    }
+}

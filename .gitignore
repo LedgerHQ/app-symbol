@@ -1,8 +1,9 @@
 bin
 debug
-dep
-obj
+build
 .vscode
-src/glyphs.c
-src/glyphs.h
-tests/build/*
+*.pyc
+__pycache__
+tests/unit-tests/build/*
+tests/unit-tests/temp_txn.raw
+tests/functional/snapshots-tmp/

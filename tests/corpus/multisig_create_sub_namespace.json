@@ -1,0 +1,16 @@
+{
+    "common_txn_header": {
+        "transactionHash": "49d6e1ce276a85b70eafe52349aacca389302e7a9754bcf1221e79494fc665a4",
+        "version": 1,
+        "networkType": 152,
+        "transactionType": "REGISTER_NAMESPACE",
+        "maxFee": 18144,
+        "deadline": 27580904022
+    },
+    "fields": {
+        "duration": 15442750803924486420,
+        "namespaceId": 11886552543529607317,
+        "registrationType": 1,
+        "namespaceName": "sub_namespace_multisig"
+    }
+}

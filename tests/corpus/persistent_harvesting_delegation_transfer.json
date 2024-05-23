@@ -1,0 +1,16 @@
+{
+    "common_txn_header": {
+        "transactionHash": "3b5e1fa6445653c971a50687e75e6d09fb30481055e3990c84b25e9222dc1155",
+        "version": 1,
+        "networkType": 152,
+        "transactionType": "TRANSFER",
+        "maxFee": 292000,
+        "deadline": 35439121040
+    },
+    "fields": {
+        "recipient": "9863e0511468632ba77c8c8597266ae1a0da8c9420c4f623",
+        "mosaicList": [],
+        "messageType": 254,
+        "message": "2a8061577301e28aec26d42efce832be498bb8cfcc7687bc5bc6b22a82f4ba415a7df13e1dea994ead70125ca250dd6cd8aea8bae26ad9a8fc9cb45a996e59bd8894e3d618043887e2383a6bb161a18ab58f406d7dff384cbd6a669fd152e5ad84b372425212caaeccb712674aa6c737894bb14fadfe93a3e3af73a34187d49740891c"
+    }
+}
