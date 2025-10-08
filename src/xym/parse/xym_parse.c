@@ -1097,9 +1097,9 @@ static void set_sign_data_length( const buffer_t* rawTxdata, uint16_t transactio
 
         if( hashes_equal )
         {
-            // Sign data from generation hash to transaction hash
+            // Sign data from generation hash to payload size (uint32_t)
             // XYM_AGGREGATE_SIGNING_LENGTH = XYM_TRANSACTION_HASH_LENGTH
-            //                                + sizeof(common_header_t) + sizeof(txn_fee_t) = 84
+            //                                + sizeof(common_header_t) + sizeof(txn_fee_t) + sizeof(uint32_t) = 88
             transactionContext.rawTxLength = XYM_AGGREGATE_SIGNING_LENGTH;
         }
         else 
