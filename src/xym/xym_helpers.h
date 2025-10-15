@@ -64,7 +64,7 @@
 #define XYM_PRIVATE_KEY_LENGTH 32
 #define XYM_TRANSACTION_HASH_LENGTH 32
 #define XYM_PKG_GETPUBLICKEY_LENGTH 22
-#define XYM_AGGREGATE_SIGNING_LENGTH 84
+#define XYM_AGGREGATE_SIGNING_LENGTH 88
 
 void xym_print_amount(uint64_t amount, uint8_t divisibility, const char *asset, char *out, size_t outlen);
 #ifndef FUZZ

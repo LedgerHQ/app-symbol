@@ -3,7 +3,7 @@ from apps.symbol import SymbolClient
 # Taken from the Makefile, to update every time the Makefile version is bumped
 MAJOR = 1
 MINOR = 0
-PATCH = 8
+PATCH = 9
 
 
 # In this test we check the behavior of the device when asked to provide the app version
