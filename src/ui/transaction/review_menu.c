@@ -1,29 +1,29 @@
 /*******************************************************************************
-*   XYM Wallet
-*   (c) 2020 FDS
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-********************************************************************************/
+ *   XYM Wallet
+ *   (c) 2020 FDS
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ********************************************************************************/
 
 #include "review_menu.h"
-#include <os_io_seproxyhal.h>
-#include <ux.h>
+#include "os_io_seproxyhal.h"
+#include "ux.h"
 #include "bagl_utils.h"
 #include "common.h"
-#include "ui/main/idle_menu.h"
-#include "xym/format/readers.h"
-#include "xym/format/fields.h"
-#include "xym/format/format.h"
+#include "idle_menu.h"
+#include "readers.h"
+#include "fields.h"
+#include "app_format.h"
 #include "glyphs.h"
 
 #ifdef HAVE_NBGL
@@ -31,48 +31,41 @@
 #endif
 
 result_action_t approval_menu_callback;
-static fields_array_t* fields;
+static fields_array_t *fields;
 
 #ifdef HAVE_BAGL
 char fieldName[MAX_FIELDNAME_LEN];
 char fieldValue[MAX_FIELD_LEN];
 
-const ux_flow_step_t* ux_review_flow[MAX_FIELD_COUNT + 3];
+const ux_flow_step_t *ux_review_flow[MAX_FIELD_COUNT + 3];
 
 static void update_content(int stackSlot);
 
-UX_STEP_NOCB_INIT(
-        ux_review_flow_step,
-        bnnn_paging,
-        update_content(stack_slot),
-        {
-            fieldName,
-            fieldValue
-        });
+UX_STEP_NOCB_INIT(ux_review_flow_step,
+                  bnnn_paging,
+                  update_content(stack_slot),
+                  {fieldName, fieldValue});
 
-UX_STEP_VALID(
-        ux_review_flow_sign,
-        pn,
-        approval_menu_callback(OPTION_SIGN),
-        {
-            &C_icon_validate_14,
-            "Approve",
-        });
+UX_STEP_VALID(ux_review_flow_sign,
+              pn,
+              approval_menu_callback(OPTION_SIGN),
+              {
+                  &C_icon_validate_14,
+                  "Approve",
+              });
 
-UX_STEP_VALID(
-        ux_review_flow_reject,
-        pn,
-        approval_menu_callback(OPTION_REJECT),
-        {
-            &C_icon_crossmark,
-            "Reject",
-        });
+UX_STEP_VALID(ux_review_flow_reject,
+              pn,
+              approval_menu_callback(OPTION_REJECT),
+              {
+                  &C_icon_crossmark,
+                  "Reject",
+              });
 
 static void update_title(const field_t *field) {
     memset(fieldName, 0, MAX_FIELDNAME_LEN);
     resolve_fieldname(field, fieldName);
 }
-
 
 static void update_value(const field_t *field) {
     memset(fieldValue, 0, MAX_FIELD_LEN);
@@ -89,7 +82,7 @@ static void update_content(int stackSlot) {
 #endif
 }
 
-#else // HAVE_BAGL
+#else  // HAVE_BAGL
 
 static nbgl_layoutTagValue_t pair;
 static nbgl_layoutTagValueList_t pairList = {0};
@@ -109,7 +102,11 @@ static void transaction_rejected(void) {
 }
 
 static void reject_confirmation(void) {
-    nbgl_useCaseConfirm("Reject transaction?", NULL, "Yes, Reject", "Go back to transaction", transaction_rejected);
+    nbgl_useCaseConfirm("Reject transaction?",
+                        NULL,
+                        "Yes, Reject",
+                        "Go back to transaction",
+                        transaction_rejected);
 }
 
 // called when long press button on 3rd page is long-touched or when reject footer is touched
@@ -123,7 +120,7 @@ static void review_choice(bool confirm) {
 
 // function called by NBGL to get the pair indexed by "index"
 static nbgl_layoutTagValue_t* get_review_pair(uint8_t index) {
-    const field_t *field = &fields->arr[index];
+    const field_t* field = &fields->arr[index];
 
     // Backup review argument as MAX_TAG_VALUE_PAIRS_DISPLAYED can be displayed
     // simultaneously and their content must be store on app side buffer as
@@ -146,7 +143,7 @@ static nbgl_layoutTagValue_t* get_review_pair(uint8_t index) {
 static void review_continue(void) {
     pairList.nbMaxLinesForValue = 0;
     pairList.nbPairs = fields->numFields;
-    pairList.pairs = NULL; // to indicate that callback should be used
+    pairList.pairs = NULL;  // to indicate that callback should be used
     pairList.callback = get_review_pair;
     pairList.startIndex = 0;
 
@@ -157,7 +154,7 @@ static void review_continue(void) {
     nbgl_useCaseStaticReview(&pairList, &infoLongPress, "Reject transaction", review_choice);
 }
 
-#endif // HAVE_BAGL
+#endif  // HAVE_BAGL
 
 void display_review_menu(fields_array_t *transactionParam, result_action_t callback) {
     fields = transactionParam;
@@ -173,14 +170,14 @@ void display_review_menu(fields_array_t *transactionParam, result_action_t callb
     ux_review_flow[fields->numFields + 2] = FLOW_END_STEP;
 
     ux_flow_init(0, ux_review_flow, NULL);
-#else // HAVE_BAGL
+#else   // HAVE_BAGL
     nbgl_useCaseReviewStart(&C_stax_app_symbol_64px,
                             "Review transaction",
                             NULL,
                             "Reject transaction",
                             review_continue,
                             reject_confirmation);
-#endif // HAVE_BAGL
+#endif  // HAVE_BAGL
 }
 
 void display_review_done(bool validated) {
@@ -188,11 +185,11 @@ void display_review_done(bool validated) {
     UNUSED(validated);
     // Display back the original UX
     display_idle_menu();
-#else // HAVE_BAGL
+#else   // HAVE_BAGL
     if (validated) {
         nbgl_useCaseStatus("TRANSACTION\nSIGNED", true, display_idle_menu);
     } else {
         nbgl_useCaseStatus("Transaction rejected", false, display_idle_menu);
     }
-#endif // HAVE_BAGL
+#endif  // HAVE_BAGL
 }

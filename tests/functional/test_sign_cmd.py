@@ -1,5 +1,5 @@
-import pytest
 from json import load
+import pytest
 
 from ragger.backend.interface import RaisePolicy
 from ragger.navigator import NavInsID, NavIns
@@ -14,7 +14,7 @@ SYMBOL_PATH = "m/44'/4343'/0'/0'/0'"
 
 
 def load_transaction_from_file(transaction_filename):
-    with open(CORPUS_DIR / transaction_filename, "r") as f:
+    with open(CORPUS_DIR / transaction_filename, encoding="utf-8") as f:
         transaction = load(f)
     return encode_txn_context(transaction)
 

@@ -23,13 +23,13 @@ set(APP_SOURCES
     ${APP_SRC_DIR}/base32.c
     ${APP_SRC_DIR}/base32.h
     ${APP_SRC_DIR}/buffer.c
-    ${APP_SRC_DIR}/buffer.h
+    ${APP_SRC_DIR}/app_buffer.h
     ${APP_SRC_DIR}/xym/xym_helpers.c
     ${APP_SRC_DIR}/xym/xym_helpers.h
     ${APP_SRC_DIR}/xym/format/fields.c
     ${APP_SRC_DIR}/xym/format/fields.h
     ${APP_SRC_DIR}/xym/format/format.c
-    ${APP_SRC_DIR}/xym/format/format.h
+    ${APP_SRC_DIR}/xym/format/app_format.h
     ${APP_SRC_DIR}/xym/format/printers.c
     ${APP_SRC_DIR}/xym/format/printers.h
     ${APP_SRC_DIR}/xym/parse/xym_parse.c

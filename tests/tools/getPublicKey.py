@@ -9,7 +9,9 @@ from ragger.backend import LedgerCommBackend
 
 SYMBOL_LIB_DIRECTORY = (Path(__file__).resolve().parent.parent / "functional").resolve().as_posix()
 sys.path.append(SYMBOL_LIB_DIRECTORY)
+# pylint: disable=wrong-import-position
 from apps.symbol import SymbolClient, TESTNET
+# pylint: enable=wrong-import-position
 
 
 parser = argparse.ArgumentParser()
@@ -32,6 +34,6 @@ with LedgerCommBackend(None, interface="hid") as backend:
     else:
         rapdu = client.send_get_public_key_non_confirm(args.path, TESTNET)
 
-    public_key = client.parse_get_public_key_response(rapdu.data, TESTNET)
+    public_key = client.parse_get_public_key_response(rapdu.data)
     print("Public Key:", public_key.hex())
     print("length: ", len(public_key.hex()))

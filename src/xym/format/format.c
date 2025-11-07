@@ -1,28 +1,28 @@
 /*******************************************************************************
-*   XYM Wallet
-*   (c) 2017 Ledger
-*   (c) 2020 FDS
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-********************************************************************************/
+ *   XYM Wallet
+ *   (c) 2017 Ledger
+ *   (c) 2020 FDS
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ********************************************************************************/
 #include <string.h>
 #include <inttypes.h>
-#include "format.h"
+#include "app_format.h"
 #include "fields.h"
 #include "readers.h"
 #include "printers.h"
-#include "apdu/global.h"
-#include "xym/xym_helpers.h"
+#include "global.h"
+#include "xym_helpers.h"
 #include "common.h"
 #include "base32.h"
 
@@ -44,7 +44,7 @@ static void int16_formatter(const field_t *field, char *dst) {
     if (value > 0) {
         SNPRINTF(dst, "%s %d %s", "Increase", value, "byte(s)");
     } else if (value < 0) {
-        SNPRINTF(dst, "%s %d %s", "Descrease", ~value + 1, "byte(s)");
+        SNPRINTF(dst, "%s %d %s", "Decrease", ~value + 1, "byte(s)");
     } else {
         SNPRINTF(dst, "%s", "Not change");
     }
@@ -214,12 +214,15 @@ static void address_formatter(const field_t *field, char *dst) {
 
 static void mosaic_formatter(const field_t *field, char *dst) {
     if (field->dataType == STI_MOSAIC_CURRENCY) {
-        const mosaic_t* value = (const mosaic_t *)field->data;
-        bool is_using_mainnet = (transactionContext.bip32Path[1] & 0x7FFFFFFF) == 4343 ? true : false;
-        if ((value->mosaicId == (is_using_mainnet ? XYM_MAINNET_MOSAIC_ID : XYM_TESTNET_MOSAIC_ID)) || field->id == XYM_MOSAIC_HL_QUANTITY) {
+        const mosaic_t *value = (const mosaic_t *) field->data;
+        bool is_using_mainnet =
+            (transactionContext.bip32Path[1] & 0x7FFFFFFF) == 4343 ? true : false;
+        if ((value->mosaicId ==
+             (is_using_mainnet ? XYM_MAINNET_MOSAIC_ID : XYM_TESTNET_MOSAIC_ID)) ||
+            field->id == XYM_MOSAIC_HL_QUANTITY) {
             xym_print_amount(value->amount, 6, "XYM", dst, MAX_FIELD_LEN);
         } else {
-            snprintf_mosaic(dst, MAX_FIELD_LEN, value, "micro");
+            snprintf_mosaic(dst, MAX_FIELD_LEN, value, (char *) "micro");
         }
     }
 }
@@ -231,8 +234,8 @@ static void xym_formatter(const field_t *field, char *dst) {
 }
 
 static void hex_msg_formatter(const field_t *field, char *dst) {
-    if (field->length >= MAX_FIELD_LEN/2 - 1) {
-        snprintf_hex2ascii(dst, MAX_FIELD_LEN, &field->data[0], MAX_FIELD_LEN/2 - 1);
+    if (field->length >= MAX_FIELD_LEN / 2 - 1) {
+        snprintf_hex2ascii(dst, MAX_FIELD_LEN, &field->data[0], MAX_FIELD_LEN / 2 - 1);
     } else {
         snprintf_hex2ascii(dst, MAX_FIELD_LEN, &field->data[0], field->length);
     }

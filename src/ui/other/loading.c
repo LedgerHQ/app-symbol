@@ -1,24 +1,24 @@
 /*******************************************************************************
-*   XYM Wallet
-*    (c) 2020 FDS
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-********************************************************************************/
+ *   XYM Wallet
+ *    (c) 2020 FDS
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ********************************************************************************/
 
-#include "loading.h"
-#include <os.h>
-#include <os_io_seproxyhal.h>
 #include <string.h>
+#include "loading.h"
+#include "os.h"
+#include "os_io_seproxyhal.h"
 #include "ux.h"
 #include "bagl_utils.h"
 
@@ -54,8 +54,8 @@
 #include <ux.h>
 
 #define STATE_WAITING 0
-#define STATE_READY 1
-#define STATE_DONE 2
+#define STATE_READY   1
+#define STATE_DONE    2
 
 #define UID_DUMMY 1
 
@@ -64,11 +64,9 @@ action_t pending_action;
 char loadingMessage[18];
 
 #ifdef HAVE_BAGL
-const bagl_element_t loading_ui[] = {
-        UI_BACKGROUND(),
-        UI_SINGLE_TEXT(loadingMessage),
-        UI_DUMMY(UID_DUMMY)
-};
+const bagl_element_t loading_ui[] = {UI_BACKGROUND(),
+                                     UI_SINGLE_TEXT(loadingMessage),
+                                     UI_DUMMY(UID_DUMMY)};
 
 unsigned int loading_ui_button(unsigned int button_mask, unsigned int button_mask_counter) {
     // It is not possible to omit this function
@@ -77,7 +75,7 @@ unsigned int loading_ui_button(unsigned int button_mask, unsigned int button_mas
     return 0;
 }
 
-const bagl_element_t* loading_ui_button_prepro(const bagl_element_t *element) {
+const bagl_element_t* loading_ui_button_prepro(const bagl_element_t* element) {
     if (element->component.userid == UID_DUMMY) {
         if (loadingState == STATE_WAITING) {
             loadingState = STATE_READY;
@@ -93,9 +91,9 @@ const bagl_element_t* loading_ui_button_prepro(const bagl_element_t *element) {
         return element;
     }
 }
-#endif // HAVE_BAGL
+#endif  // HAVE_BAGL
 
-void execute_async(action_t actionToLoad, char* message) {
+void execute_async(action_t actionToLoad, const char* message) {
     loadingState = STATE_WAITING;
     pending_action = actionToLoad;
 
@@ -104,7 +102,7 @@ void execute_async(action_t actionToLoad, char* message) {
 
 #ifdef HAVE_BAGL
     UX_DISPLAY(loading_ui, loading_ui_button_prepro)
-#else // HAVE_BAGL
+#else   // HAVE_BAGL
     pending_action();
-#endif // HAVE_BAGL
+#endif  // HAVE_BAGL
 }

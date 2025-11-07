@@ -16,22 +16,19 @@
 
 #pragma once
 
-#include <stdint.h>   
-#include <stddef.h>   
-#include <stdbool.h>  
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 #include "limitations.h"
 
 /**
  * Struct for buffer with size and offset.
  */
-typedef struct 
-{
-    const uint8_t *ptr;    /// Pointer to byte buffer
-    size_t   size;   /// Size of 'ptr' array
-    size_t   offset; /// Offset in 'ptr' array
+typedef struct {
+    const uint8_t* ptr;  /// Pointer to byte buffer
+    size_t size;         /// Size of 'ptr' array
+    size_t offset;       /// Offset in 'ptr' array
 } buffer_t;
-
-
 
 /**
  * Tell whether buffer can read bytes or not.
@@ -44,8 +41,7 @@ typedef struct
  * @return true if success, false otherwise.
  *
  */
-bool buffer_can_read(const buffer_t *buffer, size_t n);
-
+bool buffer_can_read(const buffer_t* buffer, size_t n);
 
 /**
  * Seek buffer relatively to current offset.
@@ -60,44 +56,40 @@ bool buffer_can_read(const buffer_t *buffer, size_t n);
  */
 bool buffer_seek(buffer_t* buffer, size_t offset);
 
-
 /**
  * Returns pointer to current offset within buffer
- * 
+ *
  * @param[in] buffer
  *   Pointer to input buffer struct.
- * 
+ *
  * @return pointer to current offset within buffer
  */
-const uint8_t* buffer_offset_ptr( buffer_t* buffer );
-
+const uint8_t* buffer_offset_ptr(buffer_t* buffer);
 
 /**
  * Returns pointer to current offset within buffer, and then seek buffer relatively to offset.
- * 
+ *
  * @param[in,out] buffer
  *   Pointer to input buffer struct.
- * 
+ *
  * @param[in] offset
  *   Offset to seek relatively to `buffer->offset`
- * 
+ *
  * @return pointer to current offset within buffer
  */
-const uint8_t* buffer_offset_ptr_and_seek( buffer_t* buffer, size_t n);
-
-
+const uint8_t* buffer_offset_ptr_and_seek(buffer_t* buffer, size_t n);
 
 /**
  *  Derive bip32 path from a raw APDU byte buffer
- * 
- * @param[in] buffer 
+ *
+ * @param[in] buffer
  *   The raw APDU byte buffer from host with the bip32path
- * 
- * @param[out] bip32Path 
- *   Converted bip32Path. bip32Path[n] indicates the child path at level n. 
- *   Numbers 0 to (2^31-1) are used for unhardened keys and numbers 
+ *
+ * @param[out] bip32Path
+ *   Converted bip32Path. bip32Path[n] indicates the child path at level n.
+ *   Numbers 0 to (2^31-1) are used for unhardened keys and numbers
  *   (2^31) to (2^32-1) for hardened keys.
- * 
- * @return The length of the bip32 path or '0' if there is an error. 
+ *
+ * @return The length of the bip32 path or '0' if there is an error.
  */
-uint8_t buffer_get_bip32_path( const buffer_t* buffer, uint32_t bip32Path[MAX_BIP32_PATH] );
+uint8_t buffer_get_bip32_path(const buffer_t* buffer, uint32_t bip32Path[MAX_BIP32_PATH]);

@@ -5,9 +5,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "parse/xym_parse.h"
-#include "format/format.h"
-#include "apdu/global.h"  // FIXME: transaction_context_t should be defined elsewhere
+#include "xym_parse.h"
+#include "format/app_format.h"
+#include "global.h"  // FIXME: transaction_context_t should be defined elsewhere
 
 transaction_context_t transactionContext;
 
@@ -43,40 +43,38 @@ static uint8_t *load_transaction_data(const char *filename, size_t *size) {
     return data;
 }
 
-static void check_transaction_results( const char *filename )
-{
-    buffer_t       rawTxData;
+static void check_transaction_results(const char *filename) {
+    buffer_t rawTxData;
     fields_array_t fields;
-    
-    char field_name [ MAX_FIELDNAME_LEN ];
-    char field_value[ MAX_FIELD_LEN     ];
+
+    char field_name[MAX_FIELDNAME_LEN];
+    char field_value[MAX_FIELD_LEN];
 
     size_t tx_length;
-    uint8_t * const tx_data = load_transaction_data(filename, &tx_length);
+    uint8_t *const tx_data = load_transaction_data(filename, &tx_length);
     if (tx_data == NULL) {
         fprintf(stderr, "Loading failed %s\n", filename);
         exit(1);
     }
 
-    rawTxData.ptr    = tx_data;
-    rawTxData.size   = tx_length;
+    rawTxData.ptr = tx_data;
+    rawTxData.size = tx_length;
     rawTxData.offset = 0;
-    
+
     int res = parse_txn_context(&rawTxData, &fields);
     if (res != 0) {
         fprintf(stderr, "Parsing returned %d\n", res);
         exit(1);
     }
 
-    for( int i = 0; i < fields.numFields; i++ )
-    {
+    for (int i = 0; i < fields.numFields; i++) {
         const field_t *field = &fields.arr[i];
         resolve_fieldname(field, field_name);
         format_field(field, field_value);
-        
+
         printf("%s::%s\n", field_name, field_value);
     }
-    
+
     free(tx_data);
 
     return;

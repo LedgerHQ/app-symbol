@@ -299,43 +299,43 @@ def encode_aggregate_txn_content(fields):
 def encode_txn_detail(transaction_type, fields):
     if transaction_type == 'TRANSFER':
         return encode_transfer_txn_content(fields)
-    elif transaction_type == 'AGGREGATE_COMPLETE':
+    if transaction_type == 'AGGREGATE_COMPLETE':
         return encode_aggregate_txn_content(fields)
-    elif transaction_type == 'AGGREGATE_BONDED':
+    if transaction_type == 'AGGREGATE_BONDED':
         return encode_aggregate_txn_content(fields)
-    elif transaction_type == 'MODIFY_MULTISIG_ACCOUNT':
+    if transaction_type == 'MODIFY_MULTISIG_ACCOUNT':
         return encode_multisig_account_modification_txn_content(fields)
-    elif transaction_type == 'REGISTER_NAMESPACE':
+    if transaction_type == 'REGISTER_NAMESPACE':
         return encode_namespace_registration_txn_content(fields)
-    elif transaction_type == 'ADDRESS_ALIAS':
+    if transaction_type == 'ADDRESS_ALIAS':
         return encode_address_alias_txn_content(fields)
-    elif transaction_type == 'MOSAIC_ALIAS':
+    if transaction_type == 'MOSAIC_ALIAS':
         return encode_mosaic_alias_txn_content(fields)
-    elif transaction_type == 'ACCOUNT_ADDRESS_RESTRICTION':
+    if transaction_type == 'ACCOUNT_ADDRESS_RESTRICTION':
         return encode_account_address_restriction_txn_content(fields)
-    elif transaction_type == 'ACCOUNT_MOSAIC_RESTRICTION':
+    if transaction_type == 'ACCOUNT_MOSAIC_RESTRICTION':
         return encode_account_mosaic_restriction_txn_content(fields)
-    elif transaction_type == 'ACCOUNT_OPERATION_RESTRICTION':
+    if transaction_type == 'ACCOUNT_OPERATION_RESTRICTION':
         return encode_account_operation_restriction_txn_content(fields)
-    elif transaction_type == 'ACCOUNT_KEY_LINK':
+    if transaction_type == 'ACCOUNT_KEY_LINK':
         return encode_account_key_link_txn_content(fields)
-    elif transaction_type == 'NODE_KEY_LINK':
+    if transaction_type == 'NODE_KEY_LINK':
         return encode_node_key_link_txn_content(fields)
-    elif transaction_type == 'VRF_KEY_LINK':
+    if transaction_type == 'VRF_KEY_LINK':
         return encode_vrf_key_link_txn_content(fields)
-    elif transaction_type == 'VOTING_KEY_LINK':
+    if transaction_type == 'VOTING_KEY_LINK':
         return encode_voting_key_link_txn_content(fields)
-    elif transaction_type == 'MOSAIC_DEFINITION':
+    if transaction_type == 'MOSAIC_DEFINITION':
         return encode_mosaic_definition_txn_content(fields)
-    elif transaction_type == 'MOSAIC_SUPPLY_CHANGE':
+    if transaction_type == 'MOSAIC_SUPPLY_CHANGE':
         return encode_mosaic_supply_change_txn_content(fields)
-    elif transaction_type == 'FUND_LOCK':
+    if transaction_type == 'FUND_LOCK':
         return encode_fund_lock_txn_content(fields)
-    elif transaction_type == 'ACCOUNT_METADATA':
+    if transaction_type == 'ACCOUNT_METADATA':
         return encode_account_metadata_txn_content(fields)
-    elif transaction_type == 'NAMESPACE_METADATA':
+    if transaction_type == 'NAMESPACE_METADATA':
         return encode_namespace_metadata_txn_content(fields)
-    elif transaction_type == 'MOSAIC_METADATA':
+    if transaction_type == 'MOSAIC_METADATA':
         return encode_mosaic_metadata_txn_content(fields)
     assert False
 

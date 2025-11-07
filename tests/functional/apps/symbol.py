@@ -64,7 +64,7 @@ class SymbolClient:
     def __init__(self, backend: BackendInterface):
         self._backend = backend
 
-    def send_get_version(self) -> (int, int, int):
+    def send_get_version(self) -> tuple[int, int, int]:
         rapdu: RAPDU = self._backend.exchange(CLA, INS.INS_GET_VERSION, 0, 0, b"")
         response = rapdu.data
         # response = 0x00 (1) ||
@@ -78,7 +78,7 @@ class SymbolClient:
         patch = int(response[3])
         return (major, minor, patch)
 
-    def parse_get_public_key_response(self, response: bytes, network_type: int = MAINNET) -> (bytes, str, bytes):
+    def parse_get_public_key_response(self, response: bytes) -> tuple[bytes, str, bytes]:
         # response = public_key_len (1) ||
         #            public_key (32)
         assert len(response) == 1 + 32

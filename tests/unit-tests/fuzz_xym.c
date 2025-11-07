@@ -1,17 +1,16 @@
-#include "xym/format/printers.h"
-#include "xym/format/format.h"
-#include "xym/parse/xym_parse.h"
-#include "buffer.h"
-#include "apdu/global.h"
+#include "printers.h"
+#include "app_format.h"
+#include "xym_parse.h"
+#include "app_buffer.h"
+#include "global.h"
 
 #include <stdlib.h>
 
 transaction_context_t transactionContext;
-fields_array_t  *fields = NULL;
+fields_array_t *fields = NULL;
 
 char *fieldName = NULL;
 char *fieldValue = NULL;
-
 
 void init_globals() {
     static bool initialized = false;
@@ -38,6 +37,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
         resolve_fieldname(field, fieldName);
         memset(fieldValue, 0, MAX_FIELD_LEN);
         format_field(field, fieldValue);
-        printf("%s: %s\n", fieldName, fieldValue);    }
+        printf("%s: %s\n", fieldName, fieldValue);
+    }
     return 0;
 }

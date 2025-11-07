@@ -9,13 +9,15 @@ from subprocess import run
 
 SYMBOL_LIB_DIRECTORY = (Path(__file__).resolve().parent.parent / "functional").resolve().as_posix()
 sys.path.append(SYMBOL_LIB_DIRECTORY)
+# pylint: disable=wrong-import-position
 from apps.symbol_transaction_builder import encode_txn_context
+# pylint: enable=wrong-import-position
 
 CORPUS_DIR = Path(__file__).resolve().parent.parent / "corpus"
 PARSER_BINARY = (Path(__file__).parent / "build/test_transaction_parser").resolve().as_posix()
 TEMP_TXN_FILE = (Path(__file__).parent / "temp_txn.raw").resolve().as_posix()
 
-
+# pylint: disable=line-too-long
 TESTS_CASES = {
     "transfer_transaction.json": [
         ("Transaction Type", "Transfer"),
@@ -247,6 +249,7 @@ TESTS_CASES = {
         ("Fee", "0.292 XYM")
     ]
 }
+# pylint: enable=line-too-long
 
 
 def assert_equal(a, b, text):
@@ -258,7 +261,7 @@ def assert_equal(a, b, text):
 
 def test_parsing(filename, expected):
     print("[ RUN      ] ", filename)
-    with open(CORPUS_DIR / filename) as f:
+    with open(CORPUS_DIR / filename, encoding='utf-8') as f:
         transaction = json.load(f)
 
     tx_data = encode_txn_context(transaction)
@@ -267,7 +270,7 @@ def test_parsing(filename, expected):
         f.write(tx_data)
 
     cmd = [PARSER_BINARY, TEMP_TXN_FILE]
-    res = run(cmd, capture_output=True)
+    res = run(cmd, capture_output=True, check=False)
     status = res.returncode
 
     if status != 0:
@@ -278,7 +281,7 @@ def test_parsing(filename, expected):
         if not assert_equal(len(received), len(expected), "number of fields"):
             status = 1
         else:
-            for i in range(len(received)):
+            for i, _ in enumerate(received):
                 if not assert_equal(received[i][0], expected[i][0], "name of field"):
                     status = 1
                     break
@@ -293,10 +296,14 @@ def test_parsing(filename, expected):
     return status
 
 
-status = 0
-for filename, expected in TESTS_CASES.items():
-    res = test_parsing(filename, expected)
-    if res != 0:
-        status = res
+def main() -> None:
+    status = 0
+    for filename, expected in TESTS_CASES.items():
+        res = test_parsing(filename, expected)
+        if res != 0:
+            status = res
 
-exit(status)
+    sys.exit(status)
+
+if __name__ == "__main__":
+    main()
