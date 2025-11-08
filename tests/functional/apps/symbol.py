@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 from enum import IntEnum
-from typing import Generator
+from typing import Generator, Optional
 from struct import pack
 
 from ragger.backend.interface import BackendInterface, RAPDU
@@ -68,9 +68,9 @@ class SymbolClient:
         rapdu: RAPDU = self._backend.exchange(CLA, INS.INS_GET_VERSION, 0, 0, b"")
         response = rapdu.data
         # response = 0x00 (1) ||
-        #            LEDGER_MAJOR_VERSION (1) ||
-        #            LEDGER_MINOR_VERSION (1) ||
-        #            LEDGER_PATCH_VERSION (1)
+        #            MAJOR_VERSION (1) ||
+        #            MINOR_VERSION (1) ||
+        #            PATCH_VERSION (1)
         assert len(response) == 4
         assert int(response[0]) == 0
         major = int(response[1])
@@ -78,7 +78,7 @@ class SymbolClient:
         patch = int(response[3])
         return (major, minor, patch)
 
-    def parse_get_public_key_response(self, response: bytes) -> tuple[bytes, str, bytes]:
+    def parse_get_public_key_response(self, response: bytes) -> bytes:
         # response = public_key_len (1) ||
         #            public_key (32)
         assert len(response) == 1 + 32
@@ -97,7 +97,7 @@ class SymbolClient:
 
     @contextmanager
     def send_async_get_public_key_confirm(self, derivation_path: str,
-                                          network_type: int = MAINNET) -> RAPDU:
+                                          network_type: int = MAINNET) -> Generator[None, None, None]:
         p1 = P1_CONFIRM
         p2 = P2_ED25519
         payload = pack_derivation_path(derivation_path) + pack("<B", network_type)
@@ -126,6 +126,7 @@ class SymbolClient:
         with self._backend.exchange_async(CLA, INS.INS_SIGN, p1, p2, message):
             yield
 
+    @contextmanager
     def send_async_sign_message(self,
                                 derivation_path: str,
                                 message: bytes) -> Generator[None, None, None]:
@@ -138,7 +139,8 @@ class SymbolClient:
                 self._send_sign_message(m, False, False)
             first = False
 
-        return self._send_async_sign_message(messages[-1], first, True)
+        with self._send_async_sign_message(messages[-1], first, True):
+            yield
 
-    def get_async_response(self) -> RAPDU:
+    def get_async_response(self) -> Optional[RAPDU]:
         return self._backend.last_async_response
