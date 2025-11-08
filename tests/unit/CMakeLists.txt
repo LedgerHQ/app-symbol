@@ -22,7 +22,7 @@ endif()
 set(APP_SOURCES
     ${APP_SRC_DIR}/base32.c
     ${APP_SRC_DIR}/base32.h
-    ${APP_SRC_DIR}/buffer.c
+    ${APP_SRC_DIR}/app_buffer.c
     ${APP_SRC_DIR}/app_buffer.h
     ${APP_SRC_DIR}/xym/xym_helpers.c
     ${APP_SRC_DIR}/xym/xym_helpers.h

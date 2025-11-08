@@ -16,7 +16,7 @@ make
 
 ## Running tests
 
-In the unit-tests folder, run:
+In the unit folder, run:
 
 ```shell
 ./test_transaction_parser.py
