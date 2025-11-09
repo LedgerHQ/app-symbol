@@ -259,10 +259,6 @@ static int parse_transfer_txn_content( buffer_t* rawTxData, fields_array_t* fiel
             // Show persistent harvesting delegation message
         #if defined(TARGET_NANOX) || defined(TARGET_NANOS2)
             BAIL_IF( add_new_field(fields, XYM_STR_TXN_HARVESTING, STI_HEX_MESSAGE, txn->messageSize,      buffer_offset_ptr_and_seek( rawTxData, txn->messageSize)) );
-        #elif defined(TARGET_NANOS)
-            BAIL_IF( add_new_field(fields, XYM_STR_TXN_HARVESTING_1, STI_HEX_MESSAGE, MAX_FIELD_LEN/2 - 1,                  buffer_offset_ptr_and_seek( rawTxData, MAX_FIELD_LEN/2 - 1)) ); 
-            BAIL_IF( add_new_field(fields, XYM_STR_TXN_HARVESTING_2, STI_HEX_MESSAGE, MAX_FIELD_LEN/2 - 1,                  buffer_offset_ptr_and_seek( rawTxData, MAX_FIELD_LEN/2 - 1)) ); 
-            BAIL_IF( add_new_field(fields, XYM_STR_TXN_HARVESTING_3, STI_HEX_MESSAGE, txn->messageSize - MAX_FIELD_LEN + 2, buffer_offset_ptr_and_seek( rawTxData, txn->messageSize - MAX_FIELD_LEN + 2)) ); 
         #endif
         }
         else 
