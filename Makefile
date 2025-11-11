@@ -42,6 +42,10 @@ ICON_STAX = icons/stax_app_symbol_32px.gif
 ICON_FLEX = icons/flex_app_symbol_40px.png
 ICON_APEX_P = icons/apex_app_symbol_32px.png
 
+ifeq ($(TARGET_NAME),$(filter $(TARGET_NAME),TARGET_NANOX TARGET_NANOS2))
+    ICON_HOME_NANO = glyphs/home_app_symbol.gif
+endif
+
 # Application allowed derivation curves.
 CURVE_APP_LOAD_PARAMS = secp256k1 ed25519
 
@@ -69,7 +73,7 @@ VARIANT_VALUES = xym
 ########################################
 ENABLE_BLUETOOTH = 1
 #ENABLE_NFC = 1
-#ENABLE_NBGL_FOR_NANO_DEVICES = 1
+ENABLE_NBGL_FOR_NANO_DEVICES = 1
 
 ########################################
 #         NBGL custom features         #
