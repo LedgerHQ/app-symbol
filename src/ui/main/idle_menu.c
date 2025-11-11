@@ -23,6 +23,7 @@
 #include "glyphs.h"
 #ifdef HAVE_NBGL
 #include "nbgl_use_case.h"
+#include "display.h"
 #endif
 #include "main_std_app.h"
 
@@ -78,7 +79,7 @@ static const nbgl_contentInfoList_t infoList = {
 
 void display_idle_menu(void) {
     nbgl_useCaseHomeAndSettings(APPNAME,
-                                &C_stax_app_symbol_64px,
+                                &ICON_APP_HOME,
                                 NULL,
                                 INIT_HOME_PAGE,
                                 NULL,
