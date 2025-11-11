@@ -28,7 +28,7 @@ void reset_transaction_context() {
     signState = IDLE;
 }
 
-int handle_error(ApduResponse_t errorCode) {
+int handle_error(uint16_t errorCode) {
     reset_transaction_context();
-    return io_send_error(errorCode);
+    return io_send_sw(errorCode);
 }

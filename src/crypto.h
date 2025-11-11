@@ -30,8 +30,11 @@ typedef enum {
  * @param[out] private_key
  *   The derived private key result.
  *
+ * @returns
+ *   The status of the operation.
+ *
  */
-void crypto_derive_private_key(const uint32_t* bip32_path,
-                               const uint8_t bip32_path_len,
-                               const CurveType_t curve_type,
-                               cx_ecfp_private_key_t* private_key);
+int crypto_derive_private_key(const uint32_t* bip32_path,
+                              const uint8_t bip32_path_len,
+                              const CurveType_t curve_type,
+                              cx_ecfp_private_key_t* private_key);

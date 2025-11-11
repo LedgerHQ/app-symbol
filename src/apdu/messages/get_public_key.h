@@ -19,6 +19,7 @@
 #define LEDGER_APP_XYM_GETPUBLICKEY_H
 
 #include "types.h"
+#include "parser.h"
 
 /**
  * Processes the APDU command, extracts the key data and displays
@@ -30,6 +31,6 @@
  * @return zero or positive integer if success, negative integer otherwise.
  *
  */
-int handle_public_key(const ApduCommand_t* cmd);
+int handle_public_key(const command_t* cmd);
 
 #endif  // LEDGER_APP_XYM_GETPUBLICKEY_H

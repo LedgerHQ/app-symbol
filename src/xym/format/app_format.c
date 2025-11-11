@@ -17,9 +17,9 @@
  ********************************************************************************/
 #include <string.h>
 #include <inttypes.h>
+#include "os_utils.h"
 #include "app_format.h"
 #include "fields.h"
-#include "readers.h"
 #include "printers.h"
 #include "global.h"
 #include "xym_helpers.h"
@@ -28,8 +28,12 @@
 
 typedef void (*field_formatter_t)(const field_t *field, char *dst);
 
+static inline int16_t read_int16(const uint8_t *src) {
+    return (int16_t) src[0] << 0 | (int16_t) src[1] << 8;
+}
+
 static void int8_formatter(const field_t *field, char *dst) {
-    int8_t value = read_int8(field->data);
+    int8_t value = (int8_t) field->data[0];
     if (value > 0) {
         SNPRINTF(dst, "%s %d %s", "Add", value, "address(es)");
     } else if (value < 0) {
@@ -51,7 +55,7 @@ static void int16_formatter(const field_t *field, char *dst) {
 }
 
 static void uint8_formatter(const field_t *field, char *dst) {
-    uint8_t value = read_uint8(field->data);
+    uint8_t value = (uint8_t) field->data[0];
     if (field->id == XYM_UINT8_MOSAIC_COUNT) {
         SNPRINTF(dst, "Found %d", value);
     } else if (field->id == XYM_UINT8_TXN_MESSAGE_TYPE) {
@@ -110,7 +114,7 @@ static void uint8_formatter(const field_t *field, char *dst) {
 }
 
 static void uint8_custom_formatter(const field_t *field, char *dst) {
-    uint8_t value = read_uint8(field->data);
+    uint8_t value = (uint8_t) field->data[0];
     if (value != 0) {
         if (field->id == XYM_UINT8_AA_RESTRICTION) {
             SNPRINTF(dst, "%d %s", value, "address(es)");
@@ -125,7 +129,7 @@ static void uint8_custom_formatter(const field_t *field, char *dst) {
 }
 
 static void uint16_formatter(const field_t *field, char *dst) {
-    uint16_t value = read_uint16(field->data);
+    uint16_t value = U2LE(field->data, 0);
     if (field->id == XYM_UINT16_AR_RESTRICT_TYPE) {
         if ((value & 0x0001) != 0) {
             SNPRINTF(dst, "%s", "Address");
@@ -179,7 +183,7 @@ static void uint16_formatter(const field_t *field, char *dst) {
 }
 
 static void uint32_formatter(const field_t *field, char *dst) {
-    uint32_t value = read_uint32(field->data);
+    uint32_t value = U4LE(field->data, 0);
     if ((field->id == XYM_UINT32_VKL_START_POINT) || (field->id == XYM_UINT32_VKL_END_POINT)) {
         SNPRINTF(dst, "%d", value);
     }
@@ -191,7 +195,7 @@ static void hash_formatter(const field_t *field, char *dst) {
 
 static void uint64_formatter(const field_t *field, char *dst) {
     if (field->id == XYM_UINT64_DURATION) {
-        uint64_t duration = read_uint64(field->data);
+        uint64_t duration = U8LE(field->data, 0);
         if (duration == 0) {
             SNPRINTF(dst, "%s", "Unlimited");
         } else {
@@ -201,7 +205,7 @@ static void uint64_formatter(const field_t *field, char *dst) {
             SNPRINTF(dst, "%d%s%d%s%d%s", day, "d ", hour, "h ", min, "m");
         }
     } else if (field->id == XYM_UINT64_MSC_AMOUNT) {
-        xym_print_amount(read_uint64(field->data), 0, "", dst, MAX_FIELD_LEN);
+        xym_print_amount(U8LE(field->data, 0), 0, "", dst, MAX_FIELD_LEN);
     } else {
         snprintf_hex(dst, MAX_FIELD_LEN, field->data, field->length, 1);
     }
@@ -229,7 +233,7 @@ static void mosaic_formatter(const field_t *field, char *dst) {
 
 static void xym_formatter(const field_t *field, char *dst) {
     if (field->dataType == STI_XYM) {
-        xym_print_amount(read_uint64(field->data), 6, "XYM", dst, MAX_FIELD_LEN);
+        xym_print_amount(U8LE(field->data, 0), 6, "XYM", dst, MAX_FIELD_LEN);
     }
 }
 

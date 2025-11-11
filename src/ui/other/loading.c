@@ -75,21 +75,23 @@ unsigned int loading_ui_button(unsigned int button_mask, unsigned int button_mas
     return 0;
 }
 
+void app_ticker_event_callback(void) {
+    if (loadingState == STATE_READY) {
+        loadingState = STATE_DONE;
+        pending_action();
+        pending_action = NULL;
+    }
+}
+
 const bagl_element_t* loading_ui_button_prepro(const bagl_element_t* element) {
     if (element->component.userid == UID_DUMMY) {
         if (loadingState == STATE_WAITING) {
             loadingState = STATE_READY;
             UX_CALLBACK_SET_INTERVAL(1)
-        } else if (loadingState == STATE_READY) {
-            loadingState = STATE_DONE;
-            pending_action();
-            pending_action = NULL;
         }
-
         return NULL;
-    } else {
-        return element;
     }
+    return element;
 }
 #endif  // HAVE_BAGL
 

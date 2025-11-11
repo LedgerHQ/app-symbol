@@ -21,15 +21,15 @@
 #include "types.h"
 
 /*
- * LEDGER_MAJOR_VERSION, LEDGER_MINOR_VERSION, LEDGER_PATCH_VERSION defined in Makefile
+ * MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION defined in Makefile
  */
-int handle_app_configuration() {
+int handle_app_configuration(void) {
     unsigned char data[4];
     data[0] = 0x00;
-    data[1] = LEDGER_MAJOR_VERSION;
-    data[2] = LEDGER_MINOR_VERSION;
-    data[3] = LEDGER_PATCH_VERSION;
+    data[1] = MAJOR_VERSION;
+    data[2] = MINOR_VERSION;
+    data[3] = PATCH_VERSION;
 
     buffer_t buffer = {data, 4, 0};
-    return io_send_response(&buffer, OK);
+    return io_send_response_buffer(&buffer, SWO_SUCCESS);
 }

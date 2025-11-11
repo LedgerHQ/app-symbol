@@ -21,7 +21,6 @@
 #include "bagl_utils.h"
 #include "common.h"
 #include "idle_menu.h"
-#include "readers.h"
 #include "fields.h"
 #include "app_format.h"
 #include "glyphs.h"
@@ -84,9 +83,8 @@ static void update_content(int stackSlot) {
 
 #else  // HAVE_BAGL
 
-static nbgl_layoutTagValue_t pair;
-static nbgl_layoutTagValueList_t pairList = {0};
-static nbgl_pageInfoLongPress_t infoLongPress;
+static nbgl_contentTagValue_t pair = {0};
+static nbgl_contentTagValueList_t pairList = {0};
 
 #define MAX_TAG_VALUE_PAIRS_DISPLAYED 4
 
@@ -97,29 +95,13 @@ typedef struct review_argument_t {
 
 static review_argument_t bkp_args[MAX_TAG_VALUE_PAIRS_DISPLAYED];
 
-static void transaction_rejected(void) {
-    approval_menu_callback(OPTION_REJECT);
-}
-
-static void reject_confirmation(void) {
-    nbgl_useCaseConfirm("Reject transaction?",
-                        NULL,
-                        "Yes, Reject",
-                        "Go back to transaction",
-                        transaction_rejected);
-}
-
 // called when long press button on 3rd page is long-touched or when reject footer is touched
 static void review_choice(bool confirm) {
-    if (confirm) {
-        approval_menu_callback(OPTION_SIGN);
-    } else {
-        reject_confirmation();
-    }
+    approval_menu_callback(confirm ? OPTION_SIGN : OPTION_REJECT);
 }
 
 // function called by NBGL to get the pair indexed by "index"
-static nbgl_layoutTagValue_t* get_review_pair(uint8_t index) {
+static nbgl_contentTagValue_t* get_review_pair(uint8_t index) {
     const field_t* field = &fields->arr[index];
 
     // Backup review argument as MAX_TAG_VALUE_PAIRS_DISPLAYED can be displayed
@@ -130,30 +112,14 @@ static nbgl_layoutTagValue_t* get_review_pair(uint8_t index) {
     resolve_fieldname(field, bkp_args[bkp_index].name);
     format_field(field, bkp_args[bkp_index].value);
 
+    explicit_bzero(&pair, sizeof(nbgl_contentTagValue_t));
     pair.item = bkp_args[bkp_index].name;
     pair.value = bkp_args[bkp_index].value;
 
-#ifdef HAVE_PRINTF
     PRINTF("\nPair %d - Title: %s - Value: %s\n", index, pair.item, pair.value);
-#endif
 
     return &pair;
 }
-
-static void review_continue(void) {
-    pairList.nbMaxLinesForValue = 0;
-    pairList.nbPairs = fields->numFields;
-    pairList.pairs = NULL;  // to indicate that callback should be used
-    pairList.callback = get_review_pair;
-    pairList.startIndex = 0;
-
-    infoLongPress.icon = &C_stax_app_symbol_64px;
-    infoLongPress.text = "Sign transaction";
-    infoLongPress.longPressText = "Hold to sign";
-
-    nbgl_useCaseStaticReview(&pairList, &infoLongPress, "Reject transaction", review_choice);
-}
-
 #endif  // HAVE_BAGL
 
 void display_review_menu(fields_array_t *transactionParam, result_action_t callback) {
@@ -170,13 +136,19 @@ void display_review_menu(fields_array_t *transactionParam, result_action_t callb
     ux_review_flow[fields->numFields + 2] = FLOW_END_STEP;
 
     ux_flow_init(0, ux_review_flow, NULL);
-#else   // HAVE_BAGL
-    nbgl_useCaseReviewStart(&C_stax_app_symbol_64px,
-                            "Review transaction",
-                            NULL,
-                            "Reject transaction",
-                            review_continue,
-                            reject_confirmation);
+#else  // HAVE_BAGL
+    explicit_bzero(&pairList, sizeof(nbgl_contentTagValueList_t));
+    pairList.nbPairs = fields->numFields;
+    pairList.callback = get_review_pair;
+
+    nbgl_useCaseReview(TYPE_TRANSACTION,
+                       &pairList,
+                       &C_stax_app_symbol_64px,
+                       "Review transaction",
+                       NULL,
+                       "Sign transaction",
+                       review_choice);
+
 #endif  // HAVE_BAGL
 }
 
@@ -187,9 +159,9 @@ void display_review_done(bool validated) {
     display_idle_menu();
 #else   // HAVE_BAGL
     if (validated) {
-        nbgl_useCaseStatus("TRANSACTION\nSIGNED", true, display_idle_menu);
+        nbgl_useCaseReviewStatus(STATUS_TYPE_TRANSACTION_SIGNED, display_idle_menu);
     } else {
-        nbgl_useCaseStatus("Transaction rejected", false, display_idle_menu);
+        nbgl_useCaseReviewStatus(STATUS_TYPE_TRANSACTION_REJECTED, display_idle_menu);
     }
 #endif  // HAVE_BAGL
 }

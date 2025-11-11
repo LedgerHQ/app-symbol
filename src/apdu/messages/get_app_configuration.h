@@ -20,6 +20,6 @@
 
 #include <stdint.h>
 
-int handle_app_configuration();
+int handle_app_configuration(void);
 
 #endif  // LEDGER_APP_XYM_GETAPPCONFIGURATION_H

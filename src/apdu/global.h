@@ -53,6 +53,6 @@ void reset_transaction_context();
  * to host.
  *
  */
-int handle_error(ApduResponse_t errorCode);
+int handle_error(uint16_t errorCode);
 
 #endif  // LEDGER_APP_XYM_GLOBAL_H

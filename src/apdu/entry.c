@@ -21,11 +21,11 @@
 #include "sign_transaction.h"
 #include "get_app_configuration.h"
 
-unsigned char lastINS = 0;
+static unsigned char lastINS = 0;
 
-int handle_apdu(const ApduCommand_t* cmd) {
+int handle_apdu(const command_t* cmd) {
     if (cmd->cla != CLA) {
-        return handle_error(UNKNOWN_INSTRUCTION_CLASS);
+        return handle_error(SWO_INVALID_CLA);
     }
 
     // Reset transaction context before starting to parse a new APDU message type.
@@ -47,6 +47,6 @@ int handle_apdu(const ApduCommand_t* cmd) {
             return handle_app_configuration();
 
         default:
-            return handle_error(TRANSACTION_REJECTED);
+            return handle_error(SWO_INVALID_INS);
     }
 }

@@ -18,6 +18,7 @@
 #ifndef LEDGER_APP_XYM_ENTRY_H
 #define LEDGER_APP_XYM_ENTRY_H
 #include "types.h"
+#include "parser.h"
 
 /**
  * Dispatch the APDU command to the right handler.
@@ -28,6 +29,6 @@
  * @return zero or positive integer if success, negative integer otherwise.
  *
  */
-int handle_apdu(const ApduCommand_t* cmd);
+int handle_apdu(const command_t* cmd);
 
 #endif  // LEDGER_APP_XYM_ENTRY_H

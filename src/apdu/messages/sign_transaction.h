@@ -21,6 +21,7 @@
 #include <stdint.h>
 #include "xym_parse.h"
 #include "types.h"
+#include "parser.h"
 
 extern fields_array_t fields;
 
@@ -34,6 +35,6 @@ extern fields_array_t fields;
  * @return zero or positive integer if success, negative integer otherwise.
  *
  */
-int handle_sign(const ApduCommand_t* cmd);
+int handle_sign(const command_t* cmd);
 
 #endif  // LEDGER_APP_XYM_SIGNTRANSACTION_H

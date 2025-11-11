@@ -62,6 +62,7 @@
 #define XYM_PRETTY_ADDRESS_LENGTH    39
 #define XYM_PUBLIC_KEY_LENGTH        32
 #define XYM_PRIVATE_KEY_LENGTH       32
+#define XYM_RAW_PRIVATE_KEY_LENGTH   64
 #define XYM_TRANSACTION_HASH_LENGTH  32
 #define XYM_PKG_GETPUBLICKEY_LENGTH  22
 #define XYM_AGGREGATE_SIGNING_LENGTH 88
@@ -72,11 +73,11 @@ void xym_print_amount(uint64_t amount,
                       char *out,
                       size_t outlen);
 #ifndef FUZZ
-void xym_public_key_and_address(cx_ecfp_public_key_t *inPublicKey,
-                                uint8_t inNetworkId,
-                                uint8_t *outPublicKey,
-                                char *outAddress,
-                                uint8_t outLen);
+int xym_public_key_and_address(cx_ecfp_public_key_t *inPublicKey,
+                               uint8_t inNetworkId,
+                               uint8_t *outPublicKey,
+                               char *outAddress,
+                               uint8_t outLen);
 #endif
 
 #endif  // LEDGER_APP_XYM_XYMHELPERS_H

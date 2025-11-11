@@ -75,21 +75,12 @@ UX_FLOW(ux_display_address_flow,
         &ux_display_address_flow_4_step);
 #else   // HAVE_BAGL
 
-static void address_verification_cancelled(void) {
-    rejection_action();
-}
-
 static void display_address_callback(bool confirm) {
     if (confirm) {
         approval_action();
     } else {
-        address_verification_cancelled();
+        rejection_action();
     }
-}
-
-// called when tapping on review start page to actually display address
-static void display_addr(void) {
-    nbgl_useCaseAddressConfirmation(fieldValue, &display_address_callback);
 }
 #endif  // HAVE_BAGL
 
@@ -103,12 +94,12 @@ void display_address_confirmation_ui(char* address, action_t onApprove, action_t
 #ifdef HAVE_BAGL
     ux_flow_init(0, ux_display_address_flow, NULL);
 #else
-    nbgl_useCaseReviewStart(&C_stax_app_symbol_64px,
-                            "Verify Symbol\n Address",
-                            NULL,
-                            "Cancel",
-                            display_addr,
-                            address_verification_cancelled);
+    nbgl_useCaseAddressReview(fieldValue,
+                              NULL,
+                              &C_stax_app_symbol_64px,
+                              "Verify Symbol\n Address",
+                              NULL,
+                              display_address_callback);
 #endif
 }
 
@@ -119,9 +110,9 @@ void display_address_confirmation_done(bool validated) {
     display_idle_menu();
 #else   // HAVE_BAGL
     if (validated) {
-        nbgl_useCaseStatus("ADDRESS\nVERIFIED", true, display_idle_menu);
+        nbgl_useCaseReviewStatus(STATUS_TYPE_ADDRESS_VERIFIED, display_idle_menu);
     } else {
-        nbgl_useCaseStatus("Address verification\ncancelled", false, display_idle_menu);
+        nbgl_useCaseReviewStatus(STATUS_TYPE_ADDRESS_REJECTED, display_idle_menu);
     }
 #endif  // HAVE_BAGL
 }

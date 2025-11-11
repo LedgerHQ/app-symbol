@@ -20,28 +20,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "limitations.h"
-
-/**
- * Struct for buffer with size and offset.
- */
-typedef struct {
-    const uint8_t* ptr;  /// Pointer to byte buffer
-    size_t size;         /// Size of 'ptr' array
-    size_t offset;       /// Offset in 'ptr' array
-} buffer_t;
-
-/**
- * Tell whether buffer can read bytes or not.
- *
- * @param[in] buffer
- *   Pointer to input buffer struct.
- * @param[in] n
- *   Number of bytes to read in buffer.
- *
- * @return true if success, false otherwise.
- *
- */
-bool buffer_can_read(const buffer_t* buffer, size_t n);
+#include "buffer.h"
 
 /**
  * Seek buffer relatively to current offset.
