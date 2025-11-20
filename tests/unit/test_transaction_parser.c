@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 #include "xym_parse.h"
-#include "format/app_format.h"
+#include "app_format.h"
 #include "global.h"  // FIXME: transaction_context_t should be defined elsewhere
 
 transaction_context_t transactionContext;
@@ -38,6 +38,7 @@ static uint8_t *load_transaction_data(const char *filename, size_t *size) {
         fprintf(stderr, "File read failed\n");
         exit(1);
     }
+
     *size = filesize;
     fclose(f);
     return data;
