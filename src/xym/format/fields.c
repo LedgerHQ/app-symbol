@@ -1,24 +1,24 @@
 /*******************************************************************************
-*   XYM Wallet
-*    (c) 2020 FDS
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-********************************************************************************/
+ *   XYM Wallet
+ *    (c) 2020 FDS
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ********************************************************************************/
 #include "fields.h"
 #include "common.h"
 #include "limitations.h"
 
-void resolve_fieldname(const field_t *field, char* dst) {
+void resolve_fieldname(const field_t* field, char* dst) {
     if (field->dataType == STI_INT8) {
         switch (field->id) {
             CASE_FIELDNAME(XYM_INT8_MAM_REMOVAL_DELTA, "Min Removal")
@@ -44,9 +44,7 @@ void resolve_fieldname(const field_t *field, char* dst) {
     }
 
     if (field->dataType == STI_INT16) {
-        switch (field->id) {
-            CASE_FIELDNAME(XYM_INT16_VALUE_DELTA, "Value Size Delta")
-        }
+        switch (field->id) { CASE_FIELDNAME(XYM_INT16_VALUE_DELTA, "Value Size Delta") }
     }
 
     if (field->dataType == STI_UINT16) {
@@ -111,9 +109,7 @@ void resolve_fieldname(const field_t *field, char* dst) {
     }
 
     if (field->dataType == STI_XYM) {
-        switch (field->id) {
-            CASE_FIELDNAME(XYM_UINT64_TXN_FEE, "Fee")
-        }
+        switch (field->id) { CASE_FIELDNAME(XYM_UINT64_TXN_FEE, "Fee") }
     }
 
     if (field->dataType == STI_MESSAGE) {
