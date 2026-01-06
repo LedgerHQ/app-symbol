@@ -14,61 +14,45 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *****************************************************************************/
+#include <string.h>
 #include "crypto.h"
 #include "xym_helpers.h"
 #include "limitations.h"
 
-#include <string.h>
+int crypto_derive_private_key(const uint32_t* bip32_path,
+                              const uint8_t bip32_path_len,
+                              const CurveType_t curve_type,
+                              cx_ecfp_private_key_t* private_key) {
+    int error = SWO_PARAMETER_ERROR_NO_INFO;
+    uint8_t raw_private_key[XYM_RAW_PRIVATE_KEY_LENGTH] = {0};
 
+    // derive the seed with bip32_path
+    if (curve_type == CURVE_Ed25519) {
+        unsigned char seed_key[] = "ed25519 seed";
+        CX_CHECK(os_derive_bip32_with_seed_no_throw(HDW_ED25519_SLIP10,
+                                                    CX_CURVE_Ed25519,
+                                                    bip32_path,
+                                                    bip32_path_len,
+                                                    raw_private_key,
+                                                    NULL,
+                                                    seed_key,
+                                                    sizeof(seed_key) - 1));
 
-void crypto_derive_private_key( const uint32_t*              bip32_path,
-                                const uint8_t                bip32_path_len,
-                                const CurveType_t            curve_type,
-                                      cx_ecfp_private_key_t* private_key    )
-{
-    uint8_t raw_private_key[XYM_PRIVATE_KEY_LENGTH] = {0};
-
-    BEGIN_TRY 
-    {
-        TRY 
-        {
-            // derive the seed with bip32_path
-            if( curve_type == CURVE_Ed25519 )
-            {
-                unsigned char seed_key[] = "ed25519 seed";
-
-                os_perso_derive_node_bip32_seed_key( HDW_ED25519_SLIP10, 
-                                                     CX_CURVE_Ed25519, 
-                                                     bip32_path, 
-                                                     bip32_path_len, 
-                                                     raw_private_key, 
-                                                     NULL, 
-                                                     seed_key, 
-                                                     sizeof(seed_key)-1 );
-            }
-            else
-            {
-                os_perso_derive_node_bip32( CX_CURVE_256K1,
-                                            bip32_path,
-                                            bip32_path_len,
-                                            raw_private_key,
-                                            NULL );
-            }
-
-            // initialize private_key from raw key
-            cx_ecfp_init_private_key(CX_CURVE_Ed25519,
-                                     raw_private_key,
-                                     sizeof(raw_private_key),
-                                     private_key);
-        }
-        CATCH_OTHER(e) 
-        {
-            THROW(e);
-        }
-        FINALLY 
-        {
-            explicit_bzero(&raw_private_key, sizeof(raw_private_key));
-        }
+    } else {
+        CX_CHECK(os_derive_bip32_no_throw(CX_CURVE_256K1,
+                                          bip32_path,
+                                          bip32_path_len,
+                                          raw_private_key,
+                                          NULL));
     }
-    END_TRY;
+
+    // initialize private_key from raw key
+    CX_CHECK(cx_ecfp_init_private_key_no_throw(CX_CURVE_Ed25519,
+                                               raw_private_key,
+                                               XYM_PRIVATE_KEY_LENGTH,
+                                               private_key));
+    error = SWO_SUCCESS;
+end:
+    explicit_bzero(&raw_private_key, sizeof(raw_private_key));
+    return error;
 }

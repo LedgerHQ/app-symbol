@@ -105,8 +105,8 @@ def decode_transfer_txn_content(buffer):
     buffer, recipient = read_address(buffer)
     buffer, messageSize = read_uint16_t(buffer)
     buffer, mosaicsNb = read_uint8_t(buffer)
-    buffer, reserved = read_uint32_t(buffer)
-    buffer, reserved = read_uint8_t(buffer)
+    buffer, _ = read_uint32_t(buffer)
+    buffer, _ = read_uint8_t(buffer)
 
     data = {
         "recipient": recipient
@@ -170,7 +170,7 @@ def decode_multisig_account_modification_txn_content(buffer):
     buffer, minApprovalDelta = read_int8_t(buffer)
     buffer, addressAdditionsNb = read_uint8_t(buffer)
     buffer, addressDeletionsNb = read_uint8_t(buffer)
-    buffer, reserved = read_uint32_t(buffer)
+    buffer, _ = read_uint32_t(buffer)
 
     addressAdditions = []
     for _ in range(addressAdditionsNb):
@@ -282,7 +282,7 @@ def decode_account_address_restriction_txn_content(buffer):
     buffer, restrictionFlags = read_uint16_t(buffer)
     buffer, restrictionAdditionsNb = read_uint8_t(buffer)
     buffer, restrictionDeletionsNb = read_uint8_t(buffer)
-    buffer, reserved = read_uint32_t(buffer)
+    buffer, _ = read_uint32_t(buffer)
 
     restrictionAdditions = []
     for _ in range(restrictionAdditionsNb):
@@ -306,7 +306,7 @@ def decode_account_mosaic_restriction_txn_content(buffer):
     buffer, restrictionFlags = read_uint16_t(buffer)
     buffer, restrictionAdditionsNb = read_uint8_t(buffer)
     buffer, restrictionDeletionsNb = read_uint8_t(buffer)
-    buffer, reserved = read_uint32_t(buffer)
+    buffer, _ = read_uint32_t(buffer)
 
     restrictionAdditions = []
     for _ in range(restrictionAdditionsNb):
@@ -330,7 +330,7 @@ def decode_account_operation_restriction_txn_content(buffer):
     buffer, restrictionFlags = read_uint16_t(buffer)
     buffer, restrictionAdditionsNb = read_uint8_t(buffer)
     buffer, restrictionDeletionsNb = read_uint8_t(buffer)
-    buffer, reserved = read_uint32_t(buffer)
+    buffer, _ = read_uint32_t(buffer)
 
     restrictionAdditions = []
     for _ in range(restrictionAdditionsNb):
@@ -405,9 +405,9 @@ def decode_fund_lock_txn_content(buffer):
 
 def decode_inner_tx_header(buffer):
     buffer, size = read_uint32_t(buffer)
-    buffer, reserved = read_uint32_t(buffer)
+    buffer, _ = read_uint32_t(buffer)
     buffer, signerPublicKey = read_public_key(buffer)
-    buffer, reserved = read_uint32_t(buffer)
+    buffer, _ = read_uint32_t(buffer)
     buffer, version = read_uint8_t(buffer)
     buffer, networkType = read_uint8_t(buffer)
     buffer, value = read_uint16_t(buffer)
@@ -425,7 +425,7 @@ def decode_inner_tx_header(buffer):
 def decode_aggregate_txn_content(buffer):
     buffer, transactionHash = read_array_data(buffer, 32)
     buffer, payload_data_len = read_uint32_t(buffer)
-    buffer, reserved = read_uint32_t(buffer)
+    buffer, _ = read_uint32_t(buffer)
 
     transactions = []
     buffer, payload_data = read_array_data(buffer, payload_data_len)
@@ -455,43 +455,43 @@ def decode_aggregate_txn_content(buffer):
 def decode_txn_detail(buffer, transaction_type):
     if transaction_type == 'TRANSFER':
         return decode_transfer_txn_content(buffer)
-    elif transaction_type == 'AGGREGATE_COMPLETE':
+    if transaction_type == 'AGGREGATE_COMPLETE':
         return decode_aggregate_txn_content(buffer)
-    elif transaction_type == 'AGGREGATE_BONDED':
+    if transaction_type == 'AGGREGATE_BONDED':
         return decode_aggregate_txn_content(buffer)
-    elif transaction_type == 'MODIFY_MULTISIG_ACCOUNT':
+    if transaction_type == 'MODIFY_MULTISIG_ACCOUNT':
         return decode_multisig_account_modification_txn_content(buffer)
-    elif transaction_type == 'REGISTER_NAMESPACE':
+    if transaction_type == 'REGISTER_NAMESPACE':
         return decode_namespace_registration_txn_content(buffer)
-    elif transaction_type == 'ADDRESS_ALIAS':
+    if transaction_type == 'ADDRESS_ALIAS':
         return decode_address_alias_txn_content(buffer)
-    elif transaction_type == 'MOSAIC_ALIAS':
+    if transaction_type == 'MOSAIC_ALIAS':
         return decode_mosaic_alias_txn_content(buffer)
-    elif transaction_type == 'ACCOUNT_ADDRESS_RESTRICTION':
+    if transaction_type == 'ACCOUNT_ADDRESS_RESTRICTION':
         return decode_account_address_restriction_txn_content(buffer)
-    elif transaction_type == 'ACCOUNT_MOSAIC_RESTRICTION':
+    if transaction_type == 'ACCOUNT_MOSAIC_RESTRICTION':
         return decode_account_mosaic_restriction_txn_content(buffer)
-    elif transaction_type == 'ACCOUNT_OPERATION_RESTRICTION':
+    if transaction_type == 'ACCOUNT_OPERATION_RESTRICTION':
         return decode_account_operation_restriction_txn_content(buffer)
-    elif transaction_type == 'ACCOUNT_KEY_LINK':
+    if transaction_type == 'ACCOUNT_KEY_LINK':
         return decode_account_key_link_txn_content(buffer)
-    elif transaction_type == 'NODE_KEY_LINK':
+    if transaction_type == 'NODE_KEY_LINK':
         return decode_node_key_link_txn_content(buffer)
-    elif transaction_type == 'VRF_KEY_LINK':
+    if transaction_type == 'VRF_KEY_LINK':
         return decode_vrf_key_link_txn_content(buffer)
-    elif transaction_type == 'VOTING_KEY_LINK':
+    if transaction_type == 'VOTING_KEY_LINK':
         return decode_voting_key_link_txn_content(buffer)
-    elif transaction_type == 'MOSAIC_DEFINITION':
+    if transaction_type == 'MOSAIC_DEFINITION':
         return decode_mosaic_definition_txn_content(buffer)
-    elif transaction_type == 'MOSAIC_SUPPLY_CHANGE':
+    if transaction_type == 'MOSAIC_SUPPLY_CHANGE':
         return decode_mosaic_supply_change_txn_content(buffer)
-    elif transaction_type == 'FUND_LOCK':
+    if transaction_type == 'FUND_LOCK':
         return decode_fund_lock_txn_content(buffer)
-    elif transaction_type == 'ACCOUNT_METADATA':
+    if transaction_type == 'ACCOUNT_METADATA':
         return decode_account_metadata_txn_content(buffer)
-    elif transaction_type == 'NAMESPACE_METADATA':
+    if transaction_type == 'NAMESPACE_METADATA':
         return decode_namespace_metadata_txn_content(buffer)
-    elif transaction_type == 'MOSAIC_METADATA':
+    if transaction_type == 'MOSAIC_METADATA':
         return decode_mosaic_metadata_txn_content(buffer)
     assert False
 
