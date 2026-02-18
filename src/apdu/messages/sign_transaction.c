@@ -35,7 +35,7 @@ fields_array_t fields;  ///< extracted data from rawTxData is used to fill this 
 void sign_transaction(void) {
     cx_ecfp_private_key_t privateKey;
     unsigned char signature[IO_APDU_BUFFER_SIZE];
-    buffer_t response = {NULL, 32, 0};
+    buffer_t response = {NULL, XYM_SIGNATURE_LENGTH, 0};
     int error = SWO_PARAMETER_ERROR_NO_INFO;
 
     if (signState != PENDING_REVIEW) {

@@ -1,1 +1,2 @@
 ragger[tests,speculos]>=1.6.0
+cryptography>=41.0.0
