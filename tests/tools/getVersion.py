@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 
 import sys
-
 from pathlib import Path
 
 from ragger.backend import LedgerCommBackend
 
 SYMBOL_LIB_DIRECTORY = (Path(__file__).resolve().parent.parent / "functional").resolve().as_posix()
 sys.path.append(SYMBOL_LIB_DIRECTORY)
-# pylint: disable=wrong-import-position
-from apps.symbol import SymbolClient
-# pylint: enable=wrong-import-position
+from apps.symbol import SymbolClient  # noqa: E402
 
 
 def main():

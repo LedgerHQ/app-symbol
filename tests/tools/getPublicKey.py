@@ -1,22 +1,18 @@
 #!/usr/bin/env python3
 
-import sys
 import argparse
-
+import sys
 from pathlib import Path
 
 from ragger.backend import LedgerCommBackend
 
 SYMBOL_LIB_DIRECTORY = (Path(__file__).resolve().parent.parent / "functional").resolve().as_posix()
 sys.path.append(SYMBOL_LIB_DIRECTORY)
-# pylint: disable=wrong-import-position
-from apps.symbol import SymbolClient, TESTNET
-# pylint: enable=wrong-import-position
-
+from apps.symbol import TESTNET, SymbolClient  # noqa: E402
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--path', help="BIP 32 path to use")
-parser.add_argument('--confirm', help="Request confirmation", action="store_true")
+parser.add_argument("--path", help="BIP 32 path to use")
+parser.add_argument("--confirm", help="Request confirmation", action="store_true")
 args = parser.parse_args()
 
 if args.path is None:
