@@ -21,6 +21,6 @@ jobs:
     uses: LedgerHQ/ledger-app-workflows/.github/workflows/reusable_python_checks.yml@v1
     with:
       run_type_check: true
-      src_directory: functional
-      setup_directory: tests
+      src_directory: .
+      setup_directory: tests/functional
       req_directory: tests/functional
