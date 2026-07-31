@@ -35,6 +35,6 @@ extern fields_array_t fields;
  * @return zero or positive integer if success, negative integer otherwise.
  *
  */
-int handle_sign(const command_t* cmd);
+int handle_sign(const command_t *cmd);
 
 #endif  // LEDGER_APP_XYM_SIGNTRANSACTION_H

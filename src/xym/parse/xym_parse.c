@@ -146,11 +146,11 @@ typedef struct {
         if (err) return err; \
     }
 
-static int add_new_field(fields_array_t* fields,
+static int add_new_field(fields_array_t *fields,
                          uint8_t id,
                          uint8_t data_type,
                          uint32_t length,
-                         const uint8_t* data) {
+                         const uint8_t *data) {
     uint8_t idx = fields->numFields;
 
     if (idx >= MAX_FIELD_COUNT) {
@@ -160,7 +160,7 @@ static int add_new_field(fields_array_t* fields,
         return E_NOT_ENOUGH_DATA;
     }
 
-    field_t* field = &fields->arr[idx];
+    field_t *field = &fields->arr[idx];
     field->id = id;
     field->dataType = data_type;
     field->length = length;
@@ -201,9 +201,9 @@ static int add_new_field(fields_array_t* fields,
  *
  *      maxFee (only if not multisig)
  */
-static int parse_transfer_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
+static int parse_transfer_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
     // get header
-    const txn_header_t* txn = (const txn_header_t*) buffer_offset_ptr_and_seek(
+    const txn_header_t *txn = (const txn_header_t *) buffer_offset_ptr_and_seek(
         rawTxData,
         sizeof(txn_header_t));  // Read data and security check
     if (!txn) {
@@ -221,29 +221,30 @@ static int parse_transfer_txn_content(buffer_t* rawTxData, fields_array_t* field
                               XYM_STR_RECIPIENT_ADDRESS,
                               STI_ADDRESS,
                               XYM_ADDRESS_LENGTH,
-                              (const uint8_t*) txn->recipientAddress));  // add recipient address
+                              (const uint8_t *) txn->recipientAddress));  // add recipient address
     } else {
         BAIL_IF(add_new_field(
             fields,
             XYM_STR_RECIPIENT_ADDRESS,
             STI_STR,
             0,
-            (const uint8_t*) &txn
+            (const uint8_t *) &txn
                 ->recipientAddress[0]));  // add recipient alias to namespace notification
         BAIL_IF(
             add_new_field(fields,
                           XYM_UINT64_NS_ID,
                           STI_UINT64,
                           sizeof(uint64_t),
-                          (const uint8_t*) &txn->recipientAddress[1]));  // add alias namespace ID
+                          (const uint8_t *) &txn->recipientAddress[1]));  // add alias namespace ID
     }
 
     if (txn->mosaicsCount > 1) {
-        BAIL_IF(add_new_field(fields,
-                              XYM_UINT8_MOSAIC_COUNT,
-                              STI_UINT8,
-                              sizeof(uint8_t),
-                              (const uint8_t*) &txn->mosaicsCount));  // add sent mosaic count field
+        BAIL_IF(
+            add_new_field(fields,
+                          XYM_UINT8_MOSAIC_COUNT,
+                          STI_UINT8,
+                          sizeof(uint8_t),
+                          (const uint8_t *) &txn->mosaicsCount));  // add sent mosaic count field
     }
 
     const bool is_using_mainnet = (transactionContext.bip32Path[1] & 0x7FFFFFFF) ==
@@ -253,8 +254,8 @@ static int parse_transfer_txn_content(buffer_t* rawTxData, fields_array_t* field
 
     // Show mosaics amounts
     for (uint8_t i = 0; i < txn->mosaicsCount; i++) {
-        const mosaic_t* mosaic =
-            (const mosaic_t*) buffer_offset_ptr_and_seek(rawTxData, sizeof(mosaic_t));
+        const mosaic_t *mosaic =
+            (const mosaic_t *) buffer_offset_ptr_and_seek(rawTxData, sizeof(mosaic_t));
         if (!mosaic) {
             return E_NOT_ENOUGH_DATA;
         }
@@ -265,7 +266,7 @@ static int parse_transfer_txn_content(buffer_t* rawTxData, fields_array_t* field
                                   XYM_UINT8_MOSAIC_COUNT,
                                   STI_UINT8,
                                   sizeof(uint8_t),
-                                  (const uint8_t*) &txn->mosaicsCount));
+                                  (const uint8_t *) &txn->mosaicsCount));
         }
 
         if (mosaic->mosaicId != mosaic_net_id) {
@@ -273,14 +274,14 @@ static int parse_transfer_txn_content(buffer_t* rawTxData, fields_array_t* field
                                   XYM_UNKNOWN_MOSAIC,
                                   STI_STR,
                                   0,
-                                  (const uint8_t*) mosaic));  // Unknown mosaic notification
+                                  (const uint8_t *) mosaic));  // Unknown mosaic notification
         }
 
         BAIL_IF(add_new_field(fields,
                               XYM_MOSAIC_AMOUNT,
                               STI_MOSAIC_CURRENCY,
                               sizeof(mosaic_t),
-                              (const uint8_t*) mosaic));
+                              (const uint8_t *) mosaic));
     }
 
     if (txn->messageSize == 0) {
@@ -289,13 +290,13 @@ static int parse_transfer_txn_content(buffer_t* rawTxData, fields_array_t* field
                               XYM_STR_TXN_MESSAGE,
                               STI_MESSAGE,
                               txn->messageSize,
-                              (const uint8_t*) &txn->messageSize));
+                              (const uint8_t *) &txn->messageSize));
     } else {
         // first byte of message is the message type
         if (!buffer_can_read(rawTxData, sizeof(uint8_t))) {
             return E_INVALID_DATA;
         }
-        const uint8_t* msgType = buffer_offset_ptr(rawTxData);
+        const uint8_t *msgType = buffer_offset_ptr(rawTxData);
         BAIL_IF(add_new_field(fields,
                               XYM_UINT8_TXN_MESSAGE_TYPE,
                               STI_UINT8,
@@ -369,9 +370,9 @@ static int parse_transfer_txn_content(buffer_t* rawTxData, fields_array_t* field
  *      maxFee (only if multisig)
  * }
  */
-static int parse_mosaic_definition_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
-    const mosaic_definition_data_t* txn =
-        (const mosaic_definition_data_t*) buffer_offset_ptr_and_seek(
+static int parse_mosaic_definition_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
+    const mosaic_definition_data_t *txn =
+        (const mosaic_definition_data_t *) buffer_offset_ptr_and_seek(
             rawTxData,
             sizeof(mosaic_definition_data_t));  // Read data and security check
     if (!txn) {
@@ -382,32 +383,32 @@ static int parse_mosaic_definition_txn_content(buffer_t* rawTxData, fields_array
                           XYM_UINT64_MOSAIC_ID,
                           STI_UINT64,
                           sizeof(uint64_t),
-                          (const uint8_t*) &txn->mosaicId));  // Show mosaic id
+                          (const uint8_t *) &txn->mosaicId));  // Show mosaic id
     BAIL_IF(add_new_field(fields,
                           XYM_UINT8_MD_DIV,
                           STI_UINT8,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->divisibility));  // Show mosaic divisibility
+                          (const uint8_t *) &txn->divisibility));  // Show mosaic divisibility
     BAIL_IF(add_new_field(fields,
                           XYM_UINT64_DURATION,
                           STI_UINT64,
                           sizeof(uint64_t),
-                          (const uint8_t*) &txn->duration));  // Show duration
+                          (const uint8_t *) &txn->duration));  // Show duration
     BAIL_IF(add_new_field(fields,
                           XYM_UINT8_MD_TRANS_FLAG,
                           STI_UINT8,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->flags));  // Show mosaic flag (Transferable)
+                          (const uint8_t *) &txn->flags));  // Show mosaic flag (Transferable)
     BAIL_IF(add_new_field(fields,
                           XYM_UINT8_MD_SUPPLY_FLAG,
                           STI_UINT8,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->flags));  // Show mosaic flag (Supply mutable)
+                          (const uint8_t *) &txn->flags));  // Show mosaic flag (Supply mutable)
     BAIL_IF(add_new_field(fields,
                           XYM_UINT8_MD_RESTRICT_FLAG,
                           STI_UINT8,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->flags));  // Show mosaic flag (Restrictable)
+                          (const uint8_t *) &txn->flags));  // Show mosaic flag (Restrictable)
 
     return E_SUCCESS;
 }
@@ -437,8 +438,8 @@ static int parse_mosaic_definition_txn_content(buffer_t* rawTxData, fields_array
  *      maxFee (only if multisig)
  * }
  */
-static int parse_mosaic_supply_change_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
-    const mosaic_supply_change_data_t* txn = (const mosaic_supply_change_data_t*)
+static int parse_mosaic_supply_change_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
+    const mosaic_supply_change_data_t *txn = (const mosaic_supply_change_data_t *)
         buffer_offset_ptr_and_seek(rawTxData, sizeof(mosaic_supply_change_data_t));
     if (!txn) {
         return E_NOT_ENOUGH_DATA;
@@ -448,17 +449,17 @@ static int parse_mosaic_supply_change_txn_content(buffer_t* rawTxData, fields_ar
                           XYM_UINT64_MOSAIC_ID,
                           STI_UINT64,
                           sizeof(uint64_t),
-                          (const uint8_t*) &txn->mosaic.mosaicId));  // Show mosaic id
+                          (const uint8_t *) &txn->mosaic.mosaicId));  // Show mosaic id
     BAIL_IF(add_new_field(fields,
                           XYM_UINT8_MSC_ACTION,
                           STI_UINT8,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->action));  // Show supply change action
+                          (const uint8_t *) &txn->action));  // Show supply change action
     BAIL_IF(add_new_field(fields,
                           XYM_UINT64_MSC_AMOUNT,
                           STI_UINT64,
                           sizeof(mosaic_t),
-                          (const uint8_t*) &txn->mosaic.amount));  // Show amount
+                          (const uint8_t *) &txn->mosaic.amount));  // Show amount
 
     return E_SUCCESS;
 }
@@ -498,10 +499,10 @@ static int parse_mosaic_supply_change_txn_content(buffer_t* rawTxData, fields_ar
  *      maxFee //(only if multisig)
  * }
  */
-static int parse_multisig_account_modification_txn_content(buffer_t* rawTxData,
-                                                           fields_array_t* fields) {
+static int parse_multisig_account_modification_txn_content(buffer_t *rawTxData,
+                                                           fields_array_t *fields) {
     // get header
-    const multisig_account_t* txn = (const multisig_account_t*) buffer_offset_ptr_and_seek(
+    const multisig_account_t *txn = (const multisig_account_t *) buffer_offset_ptr_and_seek(
         rawTxData,
         sizeof(multisig_account_t));  // Read data and security check
     if (!txn) {
@@ -513,7 +514,7 @@ static int parse_multisig_account_modification_txn_content(buffer_t* rawTxData,
                           XYM_UINT8_MAM_ADD_COUNT,
                           STI_UINT8,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->addressAdditionsCount));
+                          (const uint8_t *) &txn->addressAdditionsCount));
 
     // Show list of addition address
     for (uint8_t i = 0; i < txn->addressAdditionsCount; i++) {
@@ -529,7 +530,7 @@ static int parse_multisig_account_modification_txn_content(buffer_t* rawTxData,
                           XYM_UINT8_MAM_DEL_COUNT,
                           STI_UINT8,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->addressDeletionsCount));
+                          (const uint8_t *) &txn->addressDeletionsCount));
 
     // Show list of addition address
     for (uint8_t i = 0; i < txn->addressDeletionsCount; i++) {
@@ -547,14 +548,14 @@ static int parse_multisig_account_modification_txn_content(buffer_t* rawTxData,
                           XYM_INT8_MAM_APPROVAL_DELTA,
                           STI_INT8,
                           sizeof(int8_t),
-                          (const uint8_t*) &txn->minApprovalDelta));
+                          (const uint8_t *) &txn->minApprovalDelta));
 
     // Show min removal delta
     BAIL_IF(add_new_field(fields,
                           XYM_INT8_MAM_REMOVAL_DELTA,
                           STI_INT8,
                           sizeof(int8_t),
-                          (const uint8_t*) &txn->minRemovalDelta));
+                          (const uint8_t *) &txn->minRemovalDelta));
 
     return E_SUCCESS;
 }
@@ -587,9 +588,9 @@ static int parse_multisig_account_modification_txn_content(buffer_t* rawTxData,
  *      maxFee //(only if multisig)
  * }
  */
-static int parse_namespace_registration_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
+static int parse_namespace_registration_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
     // get header
-    const ns_header_t* txn = (const ns_header_t*) buffer_offset_ptr_and_seek(
+    const ns_header_t *txn = (const ns_header_t *) buffer_offset_ptr_and_seek(
         rawTxData,
         sizeof(ns_header_t));  // Read data and security check
     if (!txn) {
@@ -597,7 +598,7 @@ static int parse_namespace_registration_txn_content(buffer_t* rawTxData, fields_
     }
 
     // extract namespace name
-    const uint8_t* namespaceName = buffer_offset_ptr_and_seek(rawTxData, txn->nameSize);
+    const uint8_t *namespaceName = buffer_offset_ptr_and_seek(rawTxData, txn->nameSize);
     if (!namespaceName) {
         return E_NOT_ENOUGH_DATA;
     }
@@ -610,7 +611,7 @@ static int parse_namespace_registration_txn_content(buffer_t* rawTxData, fields_
                           XYM_UINT8_NS_REG_TYPE,
                           STI_UINT8,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->registrationType));  // namespace reg type
+                          (const uint8_t *) &txn->registrationType));  // namespace reg type
     BAIL_IF(add_new_field(fields,
                           XYM_STR_NAMESPACE,
                           STI_STR,
@@ -620,7 +621,7 @@ static int parse_namespace_registration_txn_content(buffer_t* rawTxData, fields_
                           fieldId,
                           STI_UINT64,
                           sizeof(uint64_t),
-                          (const uint8_t*) &txn->duration));  // duration/parentID
+                          (const uint8_t *) &txn->duration));  // duration/parentID
 
     return E_SUCCESS;
 }
@@ -654,10 +655,11 @@ static int parse_namespace_registration_txn_content(buffer_t* rawTxData, fields_
  *      maxFee //(only if not multisig)
  * }
  */
-static int parse_account_metadata_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
+static int parse_account_metadata_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
     // get header
-    const am_header_t* txn =
-        (const am_header_t*) buffer_offset_ptr_and_seek(rawTxData, sizeof(am_header_t));  // get fee
+    const am_header_t *txn =
+        (const am_header_t *) buffer_offset_ptr_and_seek(rawTxData,
+                                                         sizeof(am_header_t));  // get fee
     if (!txn) {
         return E_NOT_ENOUGH_DATA;
     }
@@ -668,13 +670,13 @@ static int parse_account_metadata_txn_content(buffer_t* rawTxData, fields_array_
         XYM_STR_METADATA_ADDRESS,
         STI_ADDRESS,
         XYM_ADDRESS_LENGTH,
-        (const uint8_t*) &txn->address_data.address));  // Show metadata target address
-    BAIL_IF(
-        add_new_field(fields,
-                      XYM_UINT64_METADATA_KEY,
-                      STI_UINT64,
-                      sizeof(uint64_t),
-                      (const uint8_t*) &txn->address_data.metadataKey));  // Show scope metadata key
+        (const uint8_t *) &txn->address_data.address));  // Show metadata target address
+    BAIL_IF(add_new_field(
+        fields,
+        XYM_UINT64_METADATA_KEY,
+        STI_UINT64,
+        sizeof(uint64_t),
+        (const uint8_t *) &txn->address_data.metadataKey));  // Show scope metadata key
     BAIL_IF(add_new_field(
         fields,
         XYM_STR_METADATA_VALUE,
@@ -686,7 +688,7 @@ static int parse_account_metadata_txn_content(buffer_t* rawTxData, fields_array_
                       XYM_INT16_VALUE_DELTA,
                       STI_INT16,
                       sizeof(uint16_t),
-                      (const uint8_t*) &txn->value_data.valueSizeDelta));  // Show value size delta
+                      (const uint8_t *) &txn->value_data.valueSizeDelta));  // Show value size delta
 
     return E_SUCCESS;
 }
@@ -723,39 +725,39 @@ static int parse_account_metadata_txn_content(buffer_t* rawTxData, fields_array_
  *      maxFee //(only if not multisig)
  * }
  */
-static int parse_metadata_txn_content(buffer_t* rawTxData, uint8_t id, fields_array_t* fields) {
+static int parse_metadata_txn_content(buffer_t *rawTxData, uint8_t id, fields_array_t *fields) {
     // get header
-    const mnm_header_t* txn =
-        (const mnm_header_t*) buffer_offset_ptr_and_seek(rawTxData, sizeof(mnm_header_t));
+    const mnm_header_t *txn =
+        (const mnm_header_t *) buffer_offset_ptr_and_seek(rawTxData, sizeof(mnm_header_t));
     if (!txn) {
         return E_NOT_ENOUGH_DATA;
     }
 
     // get value
-    const uint8_t* value = buffer_offset_ptr_and_seek(rawTxData, txn->value_data.valueSize);
+    const uint8_t *value = buffer_offset_ptr_and_seek(rawTxData, txn->value_data.valueSize);
     if (!value) {
         return E_NOT_ENOUGH_DATA;
     }
 
     // create fields from extracted data
-    BAIL_IF(
-        add_new_field(fields,
-                      XYM_STR_METADATA_ADDRESS,
-                      STI_ADDRESS,
-                      XYM_ADDRESS_LENGTH,
-                      (const uint8_t*) &txn->address_data.address));  // add metadata target address
-    BAIL_IF(
-        add_new_field(fields,
-                      id,
-                      STI_UINT64,
-                      sizeof(uint64_t),
-                      (const uint8_t*) &txn->mosaicNamespaceId));  // add target mosaic/namespace id
+    BAIL_IF(add_new_field(
+        fields,
+        XYM_STR_METADATA_ADDRESS,
+        STI_ADDRESS,
+        XYM_ADDRESS_LENGTH,
+        (const uint8_t *) &txn->address_data.address));  // add metadata target address
+    BAIL_IF(add_new_field(
+        fields,
+        id,
+        STI_UINT64,
+        sizeof(uint64_t),
+        (const uint8_t *) &txn->mosaicNamespaceId));  // add target mosaic/namespace id
     BAIL_IF(
         add_new_field(fields,
                       XYM_UINT64_METADATA_KEY,
                       STI_UINT64,
                       sizeof(uint64_t),
-                      (const uint8_t*) &txn->address_data.metadataKey));  // add scope metadata key
+                      (const uint8_t *) &txn->address_data.metadataKey));  // add scope metadata key
     BAIL_IF(add_new_field(fields,
                           XYM_STR_METADATA_VALUE,
                           STI_MESSAGE,
@@ -766,16 +768,16 @@ static int parse_metadata_txn_content(buffer_t* rawTxData, uint8_t id, fields_ar
                       XYM_INT16_VALUE_DELTA,
                       STI_INT16,
                       sizeof(uint16_t),
-                      (const uint8_t*) &txn->value_data.valueSizeDelta));  // add value size delta
+                      (const uint8_t *) &txn->value_data.valueSizeDelta));  // add value size delta
 
     return E_SUCCESS;
 }
 
-static int parse_mosaic_metadata_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
+static int parse_mosaic_metadata_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
     return parse_metadata_txn_content(rawTxData, XYM_UINT64_MOSAIC_ID, fields);
 }
 
-static int parse_namespace_metadata_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
+static int parse_namespace_metadata_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
     return parse_metadata_txn_content(rawTxData, XYM_UINT64_NS_ID, fields);
 }
 
@@ -805,9 +807,9 @@ static int parse_namespace_metadata_txn_content(buffer_t* rawTxData, fields_arra
  *      maxFee //(only if not multisig)
  * }
  */
-static int parse_address_alias_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
+static int parse_address_alias_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
     // get header
-    const aa_header_t* txn = (const aa_header_t*) buffer_offset_ptr_and_seek(
+    const aa_header_t *txn = (const aa_header_t *) buffer_offset_ptr_and_seek(
         rawTxData,
         sizeof(aa_header_t));  // Read data and security check
     if (!txn) {
@@ -819,17 +821,17 @@ static int parse_address_alias_txn_content(buffer_t* rawTxData, fields_array_t* 
                           XYM_UINT8_AA_TYPE,
                           STI_UINT8,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->aliasAction));  // add alias type
+                          (const uint8_t *) &txn->aliasAction));  // add alias type
     BAIL_IF(add_new_field(fields,
                           XYM_UINT64_NS_ID,
                           STI_UINT64,
                           sizeof(uint64_t),
-                          (const uint8_t*) &txn->namespaceId));  // add namespace id
+                          (const uint8_t *) &txn->namespaceId));  // add namespace id
     BAIL_IF(add_new_field(fields,
                           XYM_STR_ADDRESS,
                           STI_ADDRESS,
                           XYM_ADDRESS_LENGTH,
-                          (const uint8_t*) txn->address));  // add Recipient address
+                          (const uint8_t *) txn->address));  // add Recipient address
 
     return E_SUCCESS;
 }
@@ -861,10 +863,10 @@ static int parse_address_alias_txn_content(buffer_t* rawTxData, fields_array_t* 
  *      maxFee //(only if not multisig)
  * }
  */
-static int parse_mosaic_alias_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
+static int parse_mosaic_alias_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
     // get header
-    const ma_header_t* txn =
-        (const ma_header_t*) buffer_offset_ptr_and_seek(rawTxData, sizeof(ma_header_t));
+    const ma_header_t *txn =
+        (const ma_header_t *) buffer_offset_ptr_and_seek(rawTxData, sizeof(ma_header_t));
     if (!txn) {
         return E_NOT_ENOUGH_DATA;
     }
@@ -874,17 +876,17 @@ static int parse_mosaic_alias_txn_content(buffer_t* rawTxData, fields_array_t* f
                           XYM_UINT8_AA_TYPE,
                           STI_UINT8,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->aliasAction));  // add alisa type
+                          (const uint8_t *) &txn->aliasAction));  // add alisa type
     BAIL_IF(add_new_field(fields,
                           XYM_UINT64_NS_ID,
                           STI_UINT64,
                           sizeof(uint64_t),
-                          (const uint8_t*) &txn->namespaceId));  // add namespace id
+                          (const uint8_t *) &txn->namespaceId));  // add namespace id
     BAIL_IF(add_new_field(fields,
                           XYM_UINT64_MOSAIC_ID,
                           STI_UINT64,
                           sizeof(uint64_t),
-                          (const uint8_t*) &txn->mosaicId));  // add mosaic id
+                          (const uint8_t *) &txn->mosaicId));  // add mosaic id
 
     return E_SUCCESS;
 }
@@ -928,11 +930,11 @@ static int parse_mosaic_alias_txn_content(buffer_t* rawTxData, fields_array_t* f
  *      maxFee //(only if not multisig)
  * }
  */
-static int parse_account_restriction_txn_content(buffer_t* rawTxData,
+static int parse_account_restriction_txn_content(buffer_t *rawTxData,
                                                  uint8_t restrictionType,
-                                                 fields_array_t* fields) {
+                                                 fields_array_t *fields) {
     // get header
-    const ar_header_t* txn = (const ar_header_t*) buffer_offset_ptr_and_seek(
+    const ar_header_t *txn = (const ar_header_t *) buffer_offset_ptr_and_seek(
         rawTxData,
         sizeof(ar_header_t));  // Read data and security check
     if (!txn) {
@@ -944,7 +946,7 @@ static int parse_account_restriction_txn_content(buffer_t* rawTxData,
                           restrictionType,
                           STI_UINT8_ADDITION,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->restrictionAdditionsCount));
+                          (const uint8_t *) &txn->restrictionAdditionsCount));
 
     // Show list of addition address/mosaicId
     for (uint8_t i = 0; i < txn->restrictionAdditionsCount; i++) {
@@ -980,7 +982,7 @@ static int parse_account_restriction_txn_content(buffer_t* rawTxData,
                           restrictionType,
                           STI_UINT8_DELETION,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->restrictionDeletionsCount));
+                          (const uint8_t *) &txn->restrictionDeletionsCount));
 
     // Show list of addition address
     for (uint8_t i = 0; i < txn->restrictionDeletionsCount; i++) {
@@ -1016,7 +1018,7 @@ static int parse_account_restriction_txn_content(buffer_t* rawTxData,
                           XYM_UINT16_AR_RESTRICT_OPERATION,
                           STI_UINT16,
                           sizeof(int16_t),
-                          (const uint8_t*) &txn->restrictionFlags));
+                          (const uint8_t *) &txn->restrictionFlags));
 
     if (restrictionType != XYM_UINT8_AM_RESTRICTION) {
         // Show restriction direction
@@ -1024,7 +1026,7 @@ static int parse_account_restriction_txn_content(buffer_t* rawTxData,
                               XYM_UINT16_AR_RESTRICT_DIRECTION,
                               STI_UINT16,
                               sizeof(int16_t),
-                              (const uint8_t*) &txn->restrictionFlags));
+                              (const uint8_t *) &txn->restrictionFlags));
     }
 
     // Show restriction type
@@ -1032,23 +1034,23 @@ static int parse_account_restriction_txn_content(buffer_t* rawTxData,
                           XYM_UINT16_AR_RESTRICT_TYPE,
                           STI_UINT16,
                           sizeof(int16_t),
-                          (const uint8_t*) &txn->restrictionFlags));
+                          (const uint8_t *) &txn->restrictionFlags));
 
     return E_SUCCESS;
 }
 
-static int parse_account_address_restriction_txn_content(buffer_t* rawTxData,
-                                                         fields_array_t* fields) {
+static int parse_account_address_restriction_txn_content(buffer_t *rawTxData,
+                                                         fields_array_t *fields) {
     return parse_account_restriction_txn_content(rawTxData, XYM_UINT8_AA_RESTRICTION, fields);
 }
 
-static int parse_account_mosaic_restriction_txn_content(buffer_t* rawTxData,
-                                                        fields_array_t* fields) {
+static int parse_account_mosaic_restriction_txn_content(buffer_t *rawTxData,
+                                                        fields_array_t *fields) {
     return parse_account_restriction_txn_content(rawTxData, XYM_UINT8_AM_RESTRICTION, fields);
 }
 
-static int parse_account_operation_restriction_txn_content(buffer_t* rawTxData,
-                                                           fields_array_t* fields) {
+static int parse_account_operation_restriction_txn_content(buffer_t *rawTxData,
+                                                           fields_array_t *fields) {
     return parse_account_restriction_txn_content(rawTxData, XYM_UINT8_AO_RESTRICTION, fields);
 }
 
@@ -1077,9 +1079,9 @@ static int parse_account_operation_restriction_txn_content(buffer_t* rawTxData,
  *      maxFee //(only if not multisig)
  * }
  */
-static int parse_key_link_txn_content(buffer_t* rawTxData, uint8_t txType, fields_array_t* fields) {
+static int parse_key_link_txn_content(buffer_t *rawTxData, uint8_t txType, fields_array_t *fields) {
     // get header
-    const key_link_header_t* txn = (const key_link_header_t*) buffer_offset_ptr_and_seek(
+    const key_link_header_t *txn = (const key_link_header_t *) buffer_offset_ptr_and_seek(
         rawTxData,
         sizeof(key_link_header_t));  // Read data and security check
     if (!txn) {
@@ -1091,25 +1093,25 @@ static int parse_key_link_txn_content(buffer_t* rawTxData, uint8_t txType, field
                           XYM_UINT8_KL_TYPE,
                           STI_UINT8,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->linkAction));  // Show link action type
+                          (const uint8_t *) &txn->linkAction));  // Show link action type
     BAIL_IF(add_new_field(fields,
                           txType,
                           STI_PUBLIC_KEY,
                           XYM_PUBLIC_KEY_LENGTH,
-                          (const uint8_t*) &txn->linkedPublicKey));  // Show linked public key
+                          (const uint8_t *) &txn->linkedPublicKey));  // Show linked public key
 
     return E_SUCCESS;
 }
 
-static int parse_account_key_link_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
+static int parse_account_key_link_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
     return parse_key_link_txn_content(rawTxData, XYM_PUBLICKEY_ACCOUNT_KEY_LINK, fields);
 }
 
-static int parse_node_key_link_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
+static int parse_node_key_link_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
     return parse_key_link_txn_content(rawTxData, XYM_PUBLICKEY_NODE_KEY_LINK, fields);
 }
 
-static int parse_vrf_key_link_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
+static int parse_vrf_key_link_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
     return parse_key_link_txn_content(rawTxData, XYM_PUBLICKEY_VRF_KEY_LINK, fields);
 }
 
@@ -1139,10 +1141,10 @@ static int parse_vrf_key_link_txn_content(buffer_t* rawTxData, fields_array_t* f
  *      maxFee //(only if not multisig)
  * }
  */
-static int parse_voting_key_link_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
+static int parse_voting_key_link_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
     // get header
-    const voting_key_link_header_t* txn =
-        (const voting_key_link_header_t*) buffer_offset_ptr_and_seek(
+    const voting_key_link_header_t *txn =
+        (const voting_key_link_header_t *) buffer_offset_ptr_and_seek(
             rawTxData,
             sizeof(voting_key_link_header_t));  // Read data and security check
     if (!txn) {
@@ -1154,22 +1156,22 @@ static int parse_voting_key_link_txn_content(buffer_t* rawTxData, fields_array_t
                           XYM_UINT8_KL_TYPE,
                           STI_UINT8,
                           sizeof(uint8_t),
-                          (const uint8_t*) &txn->linkAction));  // add link action type
+                          (const uint8_t *) &txn->linkAction));  // add link action type
     BAIL_IF(add_new_field(fields,
                           XYM_UINT32_VKL_START_POINT,
                           STI_UINT32,
                           sizeof(uint32_t),
-                          (const uint8_t*) &txn->startPoint));  // add start point
+                          (const uint8_t *) &txn->startPoint));  // add start point
     BAIL_IF(add_new_field(fields,
                           XYM_UINT32_VKL_END_POINT,
                           STI_UINT32,
                           sizeof(uint32_t),
-                          (const uint8_t*) &txn->endPoint));  // add stop point
+                          (const uint8_t *) &txn->endPoint));  // add stop point
     BAIL_IF(add_new_field(fields,
                           XYM_PUBLICKEY_VOTING_KEY_LINK,
                           STI_PUBLIC_KEY,
                           XYM_PUBLIC_KEY_LENGTH,
-                          (const uint8_t*) &txn->linkedPublicKey));  // add linked public key
+                          (const uint8_t *) &txn->linkedPublicKey));  // add linked public key
 
     return E_SUCCESS;
 }
@@ -1201,9 +1203,9 @@ static int parse_voting_key_link_txn_content(buffer_t* rawTxData, fields_array_t
  *      maxFee //(only if not multisig)
  * }
  */
-static int parse_fund_lock_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
+static int parse_fund_lock_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
     // get header
-    const fl_header_t* txn = (const fl_header_t*) buffer_offset_ptr_and_seek(
+    const fl_header_t *txn = (const fl_header_t *) buffer_offset_ptr_and_seek(
         rawTxData,
         sizeof(fl_header_t));  // Read data and security check
     if (!txn) {
@@ -1215,27 +1217,27 @@ static int parse_fund_lock_txn_content(buffer_t* rawTxData, fields_array_t* fiel
                           XYM_MOSAIC_HL_QUANTITY,
                           STI_MOSAIC_CURRENCY,
                           sizeof(mosaic_t),
-                          (const uint8_t*) &txn->mosaic));  // Show lock quantity
+                          (const uint8_t *) &txn->mosaic));  // Show lock quantity
     BAIL_IF(add_new_field(fields,
                           XYM_UINT64_DURATION,
                           STI_UINT64,
                           sizeof(uint64_t),
-                          (const uint8_t*) &txn->blockDuration));  // Show duration
+                          (const uint8_t *) &txn->blockDuration));  // Show duration
     BAIL_IF(add_new_field(fields,
                           XYM_HASH256_HL_HASH,
                           STI_HASH256,
                           XYM_TRANSACTION_HASH_LENGTH,
-                          (const uint8_t*) &txn->aggregateBondedHash));  // Show transaction hash
+                          (const uint8_t *) &txn->aggregateBondedHash));  // Show transaction hash
 
     return E_SUCCESS;
 }
 
-static int parseWithFee(buffer_t* rawTxData,
-                        fields_array_t* fields,
-                        int (*parser)(buffer_t* b, fields_array_t* f)) {
+static int parseWithFee(buffer_t *rawTxData,
+                        fields_array_t *fields,
+                        int (*parser)(buffer_t *b, fields_array_t *f)) {
     // get fee
-    const txn_fee_t* fee =
-        (const txn_fee_t*) buffer_offset_ptr_and_seek(rawTxData, sizeof(txn_fee_t));  // get fee
+    const txn_fee_t *fee =
+        (const txn_fee_t *) buffer_offset_ptr_and_seek(rawTxData, sizeof(txn_fee_t));  // get fee
     if (!fee) {
         return E_NOT_ENOUGH_DATA;
     }
@@ -1251,20 +1253,20 @@ static int parseWithFee(buffer_t* rawTxData,
                           XYM_UINT64_TXN_FEE,
                           STI_XYM,
                           sizeof(uint64_t),
-                          (const uint8_t*) &fee->maxFee));
+                          (const uint8_t *) &fee->maxFee));
 
     return E_SUCCESS;
 }
 
-static int parse_inner_txn_content(buffer_t* rawTxData,
+static int parse_inner_txn_content(buffer_t *rawTxData,
                                    uint32_t len,
                                    bool isCosigning,
-                                   fields_array_t* fields) {
+                                   fields_array_t *fields) {
     uint32_t totalSize = 0;
 
     do {
         // get header
-        const inner_tx_header_t* txn = (const inner_tx_header_t*) buffer_offset_ptr_and_seek(
+        const inner_tx_header_t *txn = (const inner_tx_header_t *) buffer_offset_ptr_and_seek(
             rawTxData,
             sizeof(inner_tx_header_t));  // Read data and security check
         if (!txn) {
@@ -1279,7 +1281,7 @@ static int parse_inner_txn_content(buffer_t* rawTxData,
             isCosigning ? XYM_UINT16_TRANSACTION_DETAIL_TYPE : XYM_UINT16_INNER_TRANSACTION_TYPE,
             STI_UINT16,
             sizeof(uint16_t),
-            (const uint8_t*) &txn->innerTxType));
+            (const uint8_t *) &txn->innerTxType));
         switch (txn->innerTxType) {
             case XYM_TXN_TRANSFER: {
                 BAIL_IF(parse_transfer_txn_content(rawTxData, fields));
@@ -1376,16 +1378,16 @@ static int parse_inner_txn_content(buffer_t* rawTxData,
     return E_SUCCESS;
 }
 
-static int parse_aggregate_txn_content(buffer_t* rawTxData, fields_array_t* fields) {
+static int parse_aggregate_txn_content(buffer_t *rawTxData, fields_array_t *fields) {
     // get aggregate header
-    const aggregate_txn_t* txn =
-        (const aggregate_txn_t*) buffer_offset_ptr_and_seek(rawTxData, sizeof(aggregate_txn_t));
+    const aggregate_txn_t *txn =
+        (const aggregate_txn_t *) buffer_offset_ptr_and_seek(rawTxData, sizeof(aggregate_txn_t));
     if (!txn) {
         return E_NOT_ENOUGH_DATA;
     }
 
     bool isCosigning = (transactionContext.rawTxLength == XYM_TRANSACTION_HASH_LENGTH);
-    const uint8_t* p_tx_hash = isCosigning ? rawTxData->ptr : txn->transactionHash;
+    const uint8_t *p_tx_hash = isCosigning ? rawTxData->ptr : txn->transactionHash;
 
     // add fields
     BAIL_IF(add_new_field(fields,
@@ -1401,9 +1403,9 @@ static int parse_aggregate_txn_content(buffer_t* rawTxData, fields_array_t* fiel
     return E_SUCCESS;
 }
 
-static int parse_txn_detail(buffer_t* rawTxData,
-                            const common_header_t* txn,
-                            fields_array_t* fields) {
+static int parse_txn_detail(buffer_t *rawTxData,
+                            const common_header_t *txn,
+                            fields_array_t *fields) {
     int result;
     fields->numFields = 0;
 
@@ -1412,7 +1414,7 @@ static int parse_txn_detail(buffer_t* rawTxData,
                           XYM_UINT16_TRANSACTION_TYPE,
                           STI_UINT16,
                           sizeof(uint16_t),
-                          (const uint8_t*) &txn->transactionType));
+                          (const uint8_t *) &txn->transactionType));
 
     switch (txn->transactionType) {
         case XYM_TXN_TRANSFER: {
@@ -1499,7 +1501,7 @@ static int parse_txn_detail(buffer_t* rawTxData,
 }
 
 static void set_sign_data_length(
-    const buffer_t* rawTxdata,
+    const buffer_t *rawTxdata,
     uint16_t transactionType)  // TODO: dont change global transactionContext here!!
 {
     if ((transactionType == XYM_TXN_AGGREGATE_COMPLETE) ||
@@ -1517,7 +1519,7 @@ static void set_sign_data_length(
         const bool is_using_mainnet =
             (transactionContext.bip32Path[1] & 0x7FFFFFFF) ==
             4343;  // checks if the coin_type field of bip32 path is 'symbol'
-        const unsigned char* net_hash =
+        const unsigned char *net_hash =
             is_using_mainnet ? MAINNET_GENERATION_HASH : TESTNET_GENERATION_HASH;
         const bool hashes_equal =
             memcmp(net_hash, rawTxdata->ptr, XYM_TRANSACTION_HASH_LENGTH) == 0;
@@ -1538,9 +1540,9 @@ static void set_sign_data_length(
     }
 }
 
-int parse_txn_context(buffer_t* rawTxdata, fields_array_t* fields) {
+int parse_txn_context(buffer_t *rawTxdata, fields_array_t *fields) {
     // get common header
-    const common_header_t* txnHeader = (const common_header_t*) buffer_offset_ptr(rawTxdata);
+    const common_header_t *txnHeader = (const common_header_t *) buffer_offset_ptr(rawTxdata);
 
     // move buffer offset to next data
     const bool succ = buffer_seek(rawTxdata, sizeof(common_header_t));

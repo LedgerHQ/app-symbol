@@ -33,7 +33,7 @@
  * @return true if success, false otherwise.
  *
  */
-bool buffer_seek(buffer_t* buffer, size_t offset);
+bool buffer_seek(buffer_t *buffer, size_t offset);
 
 /**
  * Returns pointer to current offset within buffer
@@ -43,7 +43,7 @@ bool buffer_seek(buffer_t* buffer, size_t offset);
  *
  * @return pointer to current offset within buffer
  */
-const uint8_t* buffer_offset_ptr(buffer_t* buffer);
+const uint8_t *buffer_offset_ptr(buffer_t *buffer);
 
 /**
  * Returns pointer to current offset within buffer, and then seek buffer relatively to offset.
@@ -56,7 +56,7 @@ const uint8_t* buffer_offset_ptr(buffer_t* buffer);
  *
  * @return pointer to current offset within buffer
  */
-const uint8_t* buffer_offset_ptr_and_seek(buffer_t* buffer, size_t n);
+const uint8_t *buffer_offset_ptr_and_seek(buffer_t *buffer, size_t n);
 
 /**
  *  Derive bip32 path from a raw APDU byte buffer
@@ -71,4 +71,4 @@ const uint8_t* buffer_offset_ptr_and_seek(buffer_t* buffer, size_t n);
  *
  * @return The length of the bip32 path or '0' if there is an error.
  */
-uint8_t buffer_get_bip32_path(const buffer_t* buffer, uint32_t bip32Path[MAX_BIP32_PATH]);
+uint8_t buffer_get_bip32_path(const buffer_t *buffer, uint32_t bip32Path[MAX_BIP32_PATH]);

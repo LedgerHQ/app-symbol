@@ -8,9 +8,9 @@
 
 #include "app_buffer.h"
 
-buffer_t* buffer;
+buffer_t *buffer;
 
-static void test_bip32_length_limits(void** state) {
+static void test_bip32_length_limits(void **state) {
     (void) state;
 
     uint8_t data[MAX_BIP32_PATH * 4];
@@ -28,7 +28,7 @@ static void test_bip32_length_limits(void** state) {
     assert_int_equal(bip32PathLength, 0);
 }
 
-static void test_bip32_conversion(void** state) {
+static void test_bip32_conversion(void **state) {
     (void) state;
 
     uint8_t data[1 + MAX_BIP32_PATH * 4] = {5, 1, 0, 0, 0, 2, 0, 0, 0, 3, 0,

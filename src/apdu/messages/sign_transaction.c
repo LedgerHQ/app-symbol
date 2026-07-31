@@ -95,7 +95,7 @@ void reject_transaction() {
     display_review_done(false);
 }
 
-static int handle_packet_content(const buffer_t* buffer, const bool lastPacket) {
+static int handle_packet_content(const buffer_t *buffer, const bool lastPacket) {
     uint16_t totalLength = PREFIX_LENGTH + transactionContext.rawTxLength + buffer->size;
     if (totalLength > MAX_RAW_TX) {
         // Abort if the user is trying to sign a too large transaction
@@ -148,7 +148,7 @@ static bool hasMore(uint8_t p1) {
     return (p1 & P1_MASK_MORE) != 0;
 }
 
-static int handle_first_packet(const command_t* cmd) {
+static int handle_first_packet(const command_t *cmd) {
     // check that its the first packet
     if (!isFirst(cmd->p1)) {
         return INVALID_SIGNING_PACKET_ORDER;
@@ -180,7 +180,7 @@ static int handle_first_packet(const command_t* cmd) {
     return handle_packet_content(&serializedData, !hasMore(cmd->p1));
 }
 
-static int handle_subsequent_packet(const command_t* cmd) {
+static int handle_subsequent_packet(const command_t *cmd) {
     if (isFirst(cmd->p1)) {
         return INVALID_SIGNING_PACKET_ORDER;
     }
@@ -188,7 +188,7 @@ static int handle_subsequent_packet(const command_t* cmd) {
     return handle_packet_content(&serializedData, !hasMore(cmd->p1));
 }
 
-int handle_sign(const command_t* cmd) {
+int handle_sign(const command_t *cmd) {
     int result;
 
     switch (signState) {

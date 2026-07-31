@@ -19,10 +19,10 @@
 #include "xym_helpers.h"
 #include "limitations.h"
 
-int crypto_derive_private_key(const uint32_t* bip32_path,
+int crypto_derive_private_key(const uint32_t *bip32_path,
                               const uint8_t bip32_path_len,
                               const CurveType_t curve_type,
-                              cx_ecfp_private_key_t* private_key) {
+                              cx_ecfp_private_key_t *private_key) {
     int error = SWO_PARAMETER_ERROR_NO_INFO;
     uint8_t raw_private_key[XYM_RAW_PRIVATE_KEY_LENGTH] = {0};
 
