@@ -53,6 +53,7 @@ set(APP_SOURCES
 
 add_compile_definitions(
     TARGET_NANOX
+    TESTING
 )
 
 add_executable(test_transaction_parser

@@ -19,7 +19,9 @@
 #define LEDGER_APP_XYM_LIMITATIONS_H
 
 // Hardware independent limits
-#define MAX_BIP32_PATH     5
+#ifndef TESTING
+#define MAX_BIP32_PATH 5
+#endif
 #define MAX_ENC_INPUT_SIZE 26
 #define MAX_FIELDNAME_LEN  50
 #define MAX_ARRAY_LEN      8
