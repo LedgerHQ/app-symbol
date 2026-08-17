@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
-import sys
-import json
 import argparse
-
+import json
+import sys
 from pathlib import Path
 
 from ragger.backend import LedgerCommBackend
@@ -11,14 +10,12 @@ from ragger.backend import LedgerCommBackend
 CORPUS_DIR = Path(__file__).parent.parent / "corpus"
 SYMBOL_LIB_DIRECTORY = (Path(__file__).resolve().parent.parent / "functional").resolve().as_posix()
 sys.path.append(SYMBOL_LIB_DIRECTORY)
-# pylint: disable=wrong-import-position
-from apps.symbol import SymbolClient
-from apps.symbol_transaction_builder import encode_txn_context
-# pylint: enable=wrong-import-position
+from apps.symbol import SymbolClient  # noqa: E402
+from apps.symbol_transaction_builder import encode_txn_context  # noqa: E402
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--path', help="BIP 32 path to use")
-parser.add_argument('--file', help="Transaction in JSON format")
+parser.add_argument("--path", help="BIP 32 path to use")
+parser.add_argument("--file", help="Transaction in JSON format")
 args = parser.parse_args()
 
 if args.path is None:
@@ -26,9 +23,9 @@ if args.path is None:
     args.path = "m/44'/1'/0'/0'/0'"
 
 if args.file is None:
-    args.file = CORPUS_DIR / 'transfer_transaction.json'
+    args.file = CORPUS_DIR / "transfer_transaction.json"
 
-with open(args.file, encoding='utf-8') as f:
+with open(args.file, encoding="utf-8") as f:
     obj = json.load(f)
 message = encode_txn_context(obj)
 

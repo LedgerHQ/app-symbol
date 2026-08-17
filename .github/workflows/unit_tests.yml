@@ -19,10 +19,10 @@ jobs:
 
     steps:
       - name: Clone
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Clone SDK
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: LedgerHQ/ledger-secure-sdk
           path: sdk

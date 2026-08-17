@@ -23,7 +23,7 @@
 
 static unsigned char lastINS = 0;
 
-int handle_apdu(const command_t* cmd) {
+int handle_apdu(const command_t *cmd) {
     if (cmd->cla != CLA) {
         return handle_error(SWO_INVALID_CLA);
     }

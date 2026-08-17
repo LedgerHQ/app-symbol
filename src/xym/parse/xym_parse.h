@@ -55,6 +55,6 @@ typedef struct {
  * @param[out] fields     An array with the individual transaction fields
  * @return                one of the codes in the '_parser_error' enum
  */
-int parse_txn_context(buffer_t* rawTxdata, fields_array_t* fields);
+int parse_txn_context(buffer_t *rawTxdata, fields_array_t *fields);
 
 #endif  // LEDGER_APP_XYM_XYMPARSE_H

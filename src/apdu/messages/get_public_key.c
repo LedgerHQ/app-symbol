@@ -72,7 +72,7 @@ void on_address_rejected() {
  * 'keyData'.
  *
  */
-static int extract_parameters(const command_t* cmd, KeyData_t* keyData) {
+static int extract_parameters(const command_t *cmd, KeyData_t *keyData) {
     // check length of data is correct
     if (cmd->lc != XYM_PKG_GETPUBLICKEY_LENGTH) {
         return SWO_INCORRECT_DATA;
@@ -109,7 +109,7 @@ static int extract_parameters(const command_t* cmd, KeyData_t* keyData) {
  * Calculates and returns a public key which corresponds to bip32 path in 'keyData'
  *
  */
-static int get_public_key(KeyData_t* keyData,
+static int get_public_key(KeyData_t *keyData,
                           uint8_t key[XYM_PUBLIC_KEY_LENGTH],
                           char address[XYM_PRETTY_ADDRESS_LENGTH + 2]) {
     cx_ecfp_private_key_t privateKey;
@@ -154,7 +154,7 @@ end:
     return error;
 }
 
-int handle_public_key(const command_t* cmd) {
+int handle_public_key(const command_t *cmd) {
     // extract key data used for calculating public key, from APDU parameters
     KeyData_t keyData;
     int sw = SWO_PARAMETER_ERROR_NO_INFO;

@@ -29,6 +29,6 @@
  * @return zero or positive integer if success, negative integer otherwise.
  *
  */
-int handle_apdu(const command_t* cmd);
+int handle_apdu(const command_t *cmd);
 
 #endif  // LEDGER_APP_XYM_ENTRY_H

@@ -4,55 +4,55 @@ INNER_TX_HEADER_SIZE = 4 + 4 + 32 + 4 + 1 + 1 + 2
 ALIGNMENT_BYTES = 8
 
 TRANSACTION_TYPES = {
-    0x4154: 'TRANSFER',
-    0x414E: 'REGISTER_NAMESPACE',
-    0x424E: 'ADDRESS_ALIAS',
-    0x434E: 'MOSAIC_ALIAS',
-    0x414D: 'MOSAIC_DEFINITION',
-    0x424D: 'MOSAIC_SUPPLY_CHANGE',
-    0x4155: 'MODIFY_MULTISIG_ACCOUNT',
-    0x4141: 'AGGREGATE_COMPLETE',
-    0x4241: 'AGGREGATE_BONDED',
-    0x4144: 'ACCOUNT_METADATA',
-    0x4244: 'MOSAIC_METADATA',
-    0x4344: 'NAMESPACE_METADATA',
-    0x4150: 'ACCOUNT_ADDRESS_RESTRICTION',
-    0x4250: 'ACCOUNT_MOSAIC_RESTRICTION',
-    0x4350: 'ACCOUNT_OPERATION_RESTRICTION',
-    0x4251: 'MOSAIC_ADDRESS_RESTRICTION',
-    0x4151: 'MOSAIC_GLOBAL_RESTRICTION',
-    0x414C: 'ACCOUNT_KEY_LINK',
-    0x424C: 'NODE_KEY_LINK',
-    0x4143: 'VOTING_KEY_LINK',
-    0x4243: 'VRF_KEY_LINK',
-    0x4148: 'FUND_LOCK',
-    0x4152: 'SECRET_LOCK',
-    0x4252: 'SECRET_PROOF',
+    0x4154: "TRANSFER",
+    0x414E: "REGISTER_NAMESPACE",
+    0x424E: "ADDRESS_ALIAS",
+    0x434E: "MOSAIC_ALIAS",
+    0x414D: "MOSAIC_DEFINITION",
+    0x424D: "MOSAIC_SUPPLY_CHANGE",
+    0x4155: "MODIFY_MULTISIG_ACCOUNT",
+    0x4141: "AGGREGATE_COMPLETE",
+    0x4241: "AGGREGATE_BONDED",
+    0x4144: "ACCOUNT_METADATA",
+    0x4244: "MOSAIC_METADATA",
+    0x4344: "NAMESPACE_METADATA",
+    0x4150: "ACCOUNT_ADDRESS_RESTRICTION",
+    0x4250: "ACCOUNT_MOSAIC_RESTRICTION",
+    0x4350: "ACCOUNT_OPERATION_RESTRICTION",
+    0x4251: "MOSAIC_ADDRESS_RESTRICTION",
+    0x4151: "MOSAIC_GLOBAL_RESTRICTION",
+    0x414C: "ACCOUNT_KEY_LINK",
+    0x424C: "NODE_KEY_LINK",
+    0x4143: "VOTING_KEY_LINK",
+    0x4243: "VRF_KEY_LINK",
+    0x4148: "FUND_LOCK",
+    0x4152: "SECRET_LOCK",
+    0x4252: "SECRET_PROOF",
 }
 
 
 def read_int8_t(buffer):
-    return buffer[1:], unpack('<b', buffer[:1])[0]
+    return buffer[1:], unpack("<b", buffer[:1])[0]
 
 
 def read_uint8_t(buffer):
-    return buffer[1:], unpack('<B', buffer[:1])[0]
+    return buffer[1:], unpack("<B", buffer[:1])[0]
 
 
 def read_int16_t(buffer):
-    return buffer[2:], unpack('<h', buffer[:2])[0]
+    return buffer[2:], unpack("<h", buffer[:2])[0]
 
 
 def read_uint16_t(buffer):
-    return buffer[2:], unpack('<H', buffer[:2])[0]
+    return buffer[2:], unpack("<H", buffer[:2])[0]
 
 
 def read_uint32_t(buffer):
-    return buffer[4:], unpack('<I', buffer[:4])[0]
+    return buffer[4:], unpack("<I", buffer[:4])[0]
 
 
 def read_uint64_t(buffer):
-    return buffer[8:], unpack('<Q', buffer[:8])[0]
+    return buffer[8:], unpack("<Q", buffer[:8])[0]
 
 
 def read_array_data(buffer, length):
@@ -68,7 +68,7 @@ def read_len_prefixed_data(buffer):
 
 def read_len_prefixed_string(buffer):
     buffer, data = read_len_prefixed_data(buffer)
-    return buffer, data.decode('utf-8')
+    return buffer, data.decode("utf-8")
 
 
 def read_address(buffer):
@@ -96,7 +96,7 @@ def decode_common_txn_header(buffer):
         "networkType": networkType,
         "transactionType": transactionType,
         "maxFee": maxFee,
-        "deadline": deadline
+        "deadline": deadline,
     }
     return buffer, data
 
@@ -108,18 +108,18 @@ def decode_transfer_txn_content(buffer):
     buffer, _ = read_uint32_t(buffer)
     buffer, _ = read_uint8_t(buffer)
 
-    data = {
-        "recipient": recipient
-    }
+    data = {"recipient": recipient}
 
     mosaicList = []
     for _ in range(mosaicsNb):
         buffer, mosaicId = read_uint64_t(buffer)
         buffer, amount = read_uint64_t(buffer)
-        mosaicList.append({
-            "mosaicId": mosaicId,
-            "amount": amount,
-        })
+        mosaicList.append(
+            {
+                "mosaicId": mosaicId,
+                "amount": amount,
+            }
+        )
 
     data["mosaicList"] = mosaicList
 
@@ -145,7 +145,7 @@ def decode_mosaic_definition_txn_content(buffer):
         "duration": duration,
         "nonce": nonce,
         "flag": flag,
-        "divisibility": divisibility
+        "divisibility": divisibility,
     }
 
     return buffer, data
@@ -156,11 +156,7 @@ def decode_mosaic_supply_change_txn_content(buffer):
     buffer, amount = read_uint64_t(buffer)
     buffer, action = read_uint8_t(buffer)
 
-    data = {
-        "mosaicId": mosaicId,
-        "amount": amount,
-        "action": action
-    }
+    data = {"mosaicId": mosaicId, "amount": amount, "action": action}
 
     return buffer, data
 
@@ -186,7 +182,7 @@ def decode_multisig_account_modification_txn_content(buffer):
         "minRemovalDelta": minRemovalDelta,
         "minApprovalDelta": minApprovalDelta,
         "addressAdditions": addressAdditions,
-        "addressDeletions": addressDeletions
+        "addressDeletions": addressDeletions,
     }
 
     return buffer, data
@@ -202,7 +198,7 @@ def decode_namespace_registration_txn_content(buffer):
         "duration": duration,
         "namespaceId": namespaceId,
         "registrationType": registrationType,
-        "namespaceName": namespaceName
+        "namespaceName": namespaceName,
     }
 
     return buffer, data
@@ -219,7 +215,7 @@ def decode_account_metadata_txn_content(buffer):
         "address": address,
         "metadataKey": metadataKey,
         "valueSizeDelta": valueSizeDelta,
-        "value": value.hex()
+        "value": value.hex(),
     }
 
     return buffer, data
@@ -238,7 +234,7 @@ def decode_metadata_txn_content(buffer):
         "metadataKey": metadataKey,
         "mosaicNamespaceId": mosaicNamespaceId,
         "valueSizeDelta": valueSizeDelta,
-        "value": value.hex()
+        "value": value.hex(),
     }
 
     return buffer, data
@@ -257,11 +253,7 @@ def decode_address_alias_txn_content(buffer):
     buffer, address = read_address(buffer)
     buffer, aliasAction = read_uint8_t(buffer)
 
-    data = {
-        "namespaceId": namespaceId,
-        "address": address,
-        "aliasAction": aliasAction
-    }
+    data = {"namespaceId": namespaceId, "address": address, "aliasAction": aliasAction}
     return buffer, data
 
 
@@ -273,7 +265,7 @@ def decode_mosaic_alias_txn_content(buffer):
     data = {
         "namespaceId": namespaceId,
         "mosaicId": mosaicId,
-        "aliasAction": aliasAction
+        "aliasAction": aliasAction,
     }
     return buffer, data
 
@@ -297,7 +289,7 @@ def decode_account_address_restriction_txn_content(buffer):
     data = {
         "restrictionFlags": restrictionFlags,
         "restrictionAdditions": restrictionAdditions,
-        "restrictionDeletions": restrictionDeletions
+        "restrictionDeletions": restrictionDeletions,
     }
     return buffer, data
 
@@ -321,7 +313,7 @@ def decode_account_mosaic_restriction_txn_content(buffer):
     data = {
         "restrictionFlags": restrictionFlags,
         "restrictionAdditions": restrictionAdditions,
-        "restrictionDeletions": restrictionDeletions
+        "restrictionDeletions": restrictionDeletions,
     }
     return buffer, data
 
@@ -345,7 +337,7 @@ def decode_account_operation_restriction_txn_content(buffer):
     data = {
         "restrictionFlags": restrictionFlags,
         "restrictionAdditions": restrictionAdditions,
-        "restrictionDeletions": restrictionDeletions
+        "restrictionDeletions": restrictionDeletions,
     }
     return buffer, data
 
@@ -354,10 +346,7 @@ def decode_key_link_txn_content(buffer):
     buffer, linkedPublicKey = read_public_key(buffer)
     buffer, linkAction = read_uint8_t(buffer)
 
-    data = {
-        "linkedPublicKey": linkedPublicKey,
-        "linkAction": linkAction
-    }
+    data = {"linkedPublicKey": linkedPublicKey, "linkAction": linkAction}
     return buffer, data
 
 
@@ -383,7 +372,7 @@ def decode_voting_key_link_txn_content(buffer):
         "linkedPublicKey": linkedPublicKey,
         "startPoint": startPoint,
         "endPoint": endPoint,
-        "linkAction": linkAction
+        "linkAction": linkAction,
     }
     return buffer, data
 
@@ -398,7 +387,7 @@ def decode_fund_lock_txn_content(buffer):
         "mosaicId": mosaicId,
         "amount": amount,
         "blockDuration": blockDuration,
-        "aggregateBondedHash": aggregateBondedHash.hex()
+        "aggregateBondedHash": aggregateBondedHash.hex(),
     }
     return buffer, data
 
@@ -440,64 +429,58 @@ def decode_aggregate_txn_content(buffer):
         if alignement_size:
             payload_data, _ = read_array_data(payload_data, ALIGNMENT_BYTES - alignement_size)
 
-        transactions.append({
-            'inner_tx_header': header,
-            'fields': fields
-        })
+        transactions.append({"inner_tx_header": header, "fields": fields})
 
-    data = {
-        'transactionHash': transactionHash.hex(),
-        'transactions': transactions
-    }
+    data = {"transactionHash": transactionHash.hex(), "transactions": transactions}
     return buffer, data
 
 
 def decode_txn_detail(buffer, transaction_type):
-    if transaction_type == 'TRANSFER':
+    if transaction_type == "TRANSFER":
         return decode_transfer_txn_content(buffer)
-    if transaction_type == 'AGGREGATE_COMPLETE':
+    if transaction_type == "AGGREGATE_COMPLETE":
         return decode_aggregate_txn_content(buffer)
-    if transaction_type == 'AGGREGATE_BONDED':
+    if transaction_type == "AGGREGATE_BONDED":
         return decode_aggregate_txn_content(buffer)
-    if transaction_type == 'MODIFY_MULTISIG_ACCOUNT':
+    if transaction_type == "MODIFY_MULTISIG_ACCOUNT":
         return decode_multisig_account_modification_txn_content(buffer)
-    if transaction_type == 'REGISTER_NAMESPACE':
+    if transaction_type == "REGISTER_NAMESPACE":
         return decode_namespace_registration_txn_content(buffer)
-    if transaction_type == 'ADDRESS_ALIAS':
+    if transaction_type == "ADDRESS_ALIAS":
         return decode_address_alias_txn_content(buffer)
-    if transaction_type == 'MOSAIC_ALIAS':
+    if transaction_type == "MOSAIC_ALIAS":
         return decode_mosaic_alias_txn_content(buffer)
-    if transaction_type == 'ACCOUNT_ADDRESS_RESTRICTION':
+    if transaction_type == "ACCOUNT_ADDRESS_RESTRICTION":
         return decode_account_address_restriction_txn_content(buffer)
-    if transaction_type == 'ACCOUNT_MOSAIC_RESTRICTION':
+    if transaction_type == "ACCOUNT_MOSAIC_RESTRICTION":
         return decode_account_mosaic_restriction_txn_content(buffer)
-    if transaction_type == 'ACCOUNT_OPERATION_RESTRICTION':
+    if transaction_type == "ACCOUNT_OPERATION_RESTRICTION":
         return decode_account_operation_restriction_txn_content(buffer)
-    if transaction_type == 'ACCOUNT_KEY_LINK':
+    if transaction_type == "ACCOUNT_KEY_LINK":
         return decode_account_key_link_txn_content(buffer)
-    if transaction_type == 'NODE_KEY_LINK':
+    if transaction_type == "NODE_KEY_LINK":
         return decode_node_key_link_txn_content(buffer)
-    if transaction_type == 'VRF_KEY_LINK':
+    if transaction_type == "VRF_KEY_LINK":
         return decode_vrf_key_link_txn_content(buffer)
-    if transaction_type == 'VOTING_KEY_LINK':
+    if transaction_type == "VOTING_KEY_LINK":
         return decode_voting_key_link_txn_content(buffer)
-    if transaction_type == 'MOSAIC_DEFINITION':
+    if transaction_type == "MOSAIC_DEFINITION":
         return decode_mosaic_definition_txn_content(buffer)
-    if transaction_type == 'MOSAIC_SUPPLY_CHANGE':
+    if transaction_type == "MOSAIC_SUPPLY_CHANGE":
         return decode_mosaic_supply_change_txn_content(buffer)
-    if transaction_type == 'FUND_LOCK':
+    if transaction_type == "FUND_LOCK":
         return decode_fund_lock_txn_content(buffer)
-    if transaction_type == 'ACCOUNT_METADATA':
+    if transaction_type == "ACCOUNT_METADATA":
         return decode_account_metadata_txn_content(buffer)
-    if transaction_type == 'NAMESPACE_METADATA':
+    if transaction_type == "NAMESPACE_METADATA":
         return decode_namespace_metadata_txn_content(buffer)
-    if transaction_type == 'MOSAIC_METADATA':
+    if transaction_type == "MOSAIC_METADATA":
         return decode_mosaic_metadata_txn_content(buffer)
-    assert False
+    raise AssertionError(f"Unknown transaction type: {transaction_type}")
 
 
 def decode_txn_context(buffer):
     buffer, header = decode_common_txn_header(buffer)
     buffer, fields = decode_txn_detail(buffer, header["transactionType"])
     assert len(buffer) == 0
-    return {'common_txn_header': header, 'fields': fields}
+    return {"common_txn_header": header, "fields": fields}

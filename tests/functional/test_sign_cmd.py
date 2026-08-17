@@ -1,23 +1,22 @@
 from json import load
-import pytest
 
+import pytest
+from apps.symbol import ErrorType, SymbolClient
+from apps.symbol_transaction_builder import encode_txn_context
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 from ragger.error import ExceptionRAPDU
 from ragger.navigator.navigation_scenario import NavigateWithScenario
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
-from cryptography.exceptions import InvalidSignature
-
-from apps.symbol import SymbolClient, ErrorType
-from apps.symbol_transaction_builder import encode_txn_context
-from utils import ROOT_SCREENSHOT_PATH, CORPUS_DIR, CORPUS_FILES
+from utils import CORPUS_DIR, CORPUS_FILES, ROOT_SCREENSHOT_PATH
 
 # Proposed XYM derivation paths for tests ###
 SYMBOL_PATH = "m/44'/4343'/0'/0'/0'"
 
 
-def load_transaction_from_file(transaction_filename: str) -> tuple[bytes,str]:
+def load_transaction_from_file(transaction_filename: str) -> tuple[bytes, str]:
     with open(CORPUS_DIR / transaction_filename, encoding="utf-8") as f:
         transaction = load(f)
-    return encode_txn_context(transaction), transaction['common_txn_header']['transactionType']
+    return encode_txn_context(transaction), transaction["common_txn_header"]["transactionType"]
 
 
 @pytest.mark.parametrize("transaction_filename", CORPUS_FILES)
@@ -34,15 +33,11 @@ def test_sign_tx_accepted(transaction_filename: str, scenario_navigator: Navigat
     assert len(response.data) == 64  # ED25519 signature is 64 bytes
 
     # Determine what data was actually signed by the device
-    if transaction_type in ['AGGREGATE_COMPLETE', 'AGGREGATE_BONDED']:
+    if transaction_type in ["AGGREGATE_COMPLETE", "AGGREGATE_BONDED"]:
         # For aggregate transactions, the device checks the generation hash based on BIP32 path
         # Path m/44'/4343'/... uses coin_type 4343 = Symbol mainnet
-        TESTNET_GENERATION_HASH = bytes.fromhex(
-            '49d6e1ce276a85b70eafe52349aacca389302e7a9754bcf1221e79494fc665a4'
-        )
-        MAINNET_GENERATION_HASH = bytes.fromhex(
-            '57f7da205008026c776cb6aed843393f04cd458e0aa2d9f1d5f31a402072b2d6'
-        )
+        TESTNET_GENERATION_HASH = bytes.fromhex("49d6e1ce276a85b70eafe52349aacca389302e7a9754bcf1221e79494fc665a4")
+        MAINNET_GENERATION_HASH = bytes.fromhex("57f7da205008026c776cb6aed843393f04cd458e0aa2d9f1d5f31a402072b2d6")
 
         # The device determines expected hash from BIP32 path coin_type
         # SYMBOL_PATH = "m/44'/4343'/0'/0'/0'" -> coin_type 4343 -> mainnet

@@ -1,12 +1,11 @@
+from collections.abc import Generator
 from contextlib import contextmanager
 from enum import IntEnum
-from typing import Generator, Optional
 from struct import pack
 
-from ragger.backend.interface import BackendInterface, RAPDU
-from ragger.utils import split_message
+from ragger.backend.interface import RAPDU, BackendInterface
 from ragger.bip import pack_derivation_path
-
+from ragger.utils import split_message
 
 TESTNET = 152
 MAINNET = 104
@@ -83,26 +82,22 @@ class SymbolClient:
         #            public_key (32)
         assert len(response) == 1 + 32
         assert response[0] == 32
-        public_key: bytes = response[1: 1 + 32]
+        public_key: bytes = response[1 : 1 + 32]
 
         return public_key
 
-    def send_get_public_key_non_confirm(self, derivation_path: str,
-                                        network_type: int = MAINNET) -> RAPDU:
+    def send_get_public_key_non_confirm(self, derivation_path: str, network_type: int = MAINNET) -> RAPDU:
         p1 = P1_NON_CONFIRM
         p2 = P2_ED25519
         payload = pack_derivation_path(derivation_path) + pack("<B", network_type)
-        return self._backend.exchange(CLA, INS.INS_GET_PUBLIC_KEY,
-                                      p1, p2, payload)
+        return self._backend.exchange(CLA, INS.INS_GET_PUBLIC_KEY, p1, p2, payload)
 
     @contextmanager
-    def send_async_get_public_key_confirm(self, derivation_path: str,
-                                          network_type: int = MAINNET) -> Generator[None, None, None]:
+    def send_async_get_public_key_confirm(self, derivation_path: str, network_type: int = MAINNET) -> Generator[None, None, None]:
         p1 = P1_CONFIRM
         p2 = P2_ED25519
         payload = pack_derivation_path(derivation_path) + pack("<B", network_type)
-        with self._backend.exchange_async(CLA, INS.INS_GET_PUBLIC_KEY,
-                                          p1, p2, payload):
+        with self._backend.exchange_async(CLA, INS.INS_GET_PUBLIC_KEY, p1, p2, payload):
             yield
 
     def _send_sign_message(self, message: bytes, first: bool, last: bool) -> RAPDU:
@@ -115,8 +110,7 @@ class SymbolClient:
         return self._backend.exchange(CLA, INS.INS_SIGN, p1, p2, message)
 
     @contextmanager
-    def _send_async_sign_message(self, message: bytes,
-                                 first: bool, last: bool) -> Generator[None, None, None]:
+    def _send_async_sign_message(self, message: bytes, first: bool, last: bool) -> Generator[None, None, None]:
         p1 = 0
         if not first:
             p1 |= P1_MASK_ORDER
@@ -127,9 +121,7 @@ class SymbolClient:
             yield
 
     @contextmanager
-    def send_async_sign_message(self,
-                                derivation_path: str,
-                                message: bytes) -> Generator[None, None, None]:
+    def send_async_sign_message(self, derivation_path: str, message: bytes) -> Generator[None, None, None]:
         messages = split_message(pack_derivation_path(derivation_path) + message, MAX_CHUNK_SIZE)
         first = True
 
@@ -142,5 +134,5 @@ class SymbolClient:
         with self._send_async_sign_message(messages[-1], first, True):
             yield
 
-    def get_async_response(self) -> Optional[RAPDU]:
+    def get_async_response(self) -> RAPDU | None:
         return self._backend.last_async_response

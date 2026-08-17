@@ -23,6 +23,6 @@
 
 typedef void (*result_action_t)(unsigned int result);
 
-void review_transaction(fields_array_t* fields, action_t onApprove, action_t onReject);
+void review_transaction(fields_array_t *fields, action_t onApprove, action_t onReject);
 
 #endif  // LEDGER_APP_XYM_TRANSACTION_H

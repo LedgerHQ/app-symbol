@@ -34,7 +34,7 @@ void on_approval_menu_result(unsigned int result) {
     }
 }
 
-void review_transaction(fields_array_t* fields, action_t onApprove, action_t onReject) {
+void review_transaction(fields_array_t *fields, action_t onApprove, action_t onReject) {
     approval_action = onApprove;
     rejection_action = onReject;
 

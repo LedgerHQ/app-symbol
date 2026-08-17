@@ -18,7 +18,7 @@
 #include "common.h"
 #include "limitations.h"
 
-void resolve_fieldname(const field_t* field, char* dst) {
+void resolve_fieldname(const field_t *field, char *dst) {
     if (field->dataType == STI_INT8) {
         switch (field->id) {
             CASE_FIELDNAME(XYM_INT8_MAM_REMOVAL_DELTA, "Min Removal")

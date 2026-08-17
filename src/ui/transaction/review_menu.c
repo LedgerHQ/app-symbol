@@ -26,7 +26,7 @@
 #include "display.h"
 
 result_action_t approval_menu_callback;
-static fields_array_t* fields;
+static fields_array_t *fields;
 
 static nbgl_contentTagValue_t pair = {0};
 static nbgl_contentTagValueList_t pairList = {0};
@@ -46,8 +46,8 @@ static void review_choice(bool confirm) {
 }
 
 // function called by NBGL to get the pair indexed by "index"
-static nbgl_contentTagValue_t* get_review_pair(uint8_t index) {
-    const field_t* field = &fields->arr[index];
+static nbgl_contentTagValue_t *get_review_pair(uint8_t index) {
+    const field_t *field = &fields->arr[index];
 
     // Backup review argument as MAX_TAG_VALUE_PAIRS_DISPLAYED can be displayed
     // simultaneously and their content must be store on app side buffer as
@@ -66,7 +66,7 @@ static nbgl_contentTagValue_t* get_review_pair(uint8_t index) {
     return &pair;
 }
 
-void display_review_menu(fields_array_t* transactionParam, result_action_t callback) {
+void display_review_menu(fields_array_t *transactionParam, result_action_t callback) {
     fields = transactionParam;
     approval_menu_callback = callback;
 
