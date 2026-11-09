@@ -1,4 +1,3 @@
-from json import load
 import pytest
 
 from ragger.error import ExceptionRAPDU
@@ -7,17 +6,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 from cryptography.exceptions import InvalidSignature
 
 from apps.symbol import SymbolClient, ErrorType
-from apps.symbol_transaction_builder import encode_txn_context
-from utils import ROOT_SCREENSHOT_PATH, CORPUS_DIR, CORPUS_FILES
-
-# Proposed XYM derivation paths for tests ###
-SYMBOL_PATH = "m/44'/4343'/0'/0'/0'"
-
-
-def load_transaction_from_file(transaction_filename: str) -> tuple[bytes,str]:
-    with open(CORPUS_DIR / transaction_filename, encoding="utf-8") as f:
-        transaction = load(f)
-    return encode_txn_context(transaction), transaction['common_txn_header']['transactionType']
+from utils import ROOT_SCREENSHOT_PATH, CORPUS_FILES, SYMBOL_PATH, load_transaction_from_file
 
 
 @pytest.mark.parametrize("transaction_filename", CORPUS_FILES)

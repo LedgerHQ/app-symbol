@@ -31,7 +31,7 @@ uint8_t G_xym_public_key[XYM_PUBLIC_KEY_LENGTH];
 typedef struct {
     bool confirmTransaction;
     uint8_t bip32PathLength;
-    uint32_t bip32Path[MAX_BIP32_PATH];
+    uint32_t bip32Path[XYM_MAX_BIP32_PATH];
     uint8_t networkType;
     CurveType_t curveType;
 } KeyData_t;
