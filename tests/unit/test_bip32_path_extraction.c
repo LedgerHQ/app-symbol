@@ -13,17 +13,17 @@ buffer_t* buffer;
 static void test_bip32_length_limits(void** state) {
     (void) state;
 
-    uint8_t data[MAX_BIP32_PATH * 4];
-    uint32_t bip32Path[MAX_BIP32_PATH];
-    const buffer_t buffer = {data, MAX_BIP32_PATH * 4, 0};
+    uint8_t data[XYM_MAX_BIP32_PATH * 4];
+    uint32_t bip32Path[XYM_MAX_BIP32_PATH];
+    const buffer_t buffer = {data, XYM_MAX_BIP32_PATH * 4, 0};
 
     // test bip32 length 0
     data[0] = 0;
     uint8_t bip32PathLength = buffer_get_bip32_path(&buffer, bip32Path);
     assert_int_equal(bip32PathLength, 0);
 
-    // test bip32 length > MAX_BIP32_PATH
-    data[0] = MAX_BIP32_PATH + 1;
+    // test bip32 length > XYM_MAX_BIP32_PATH
+    data[0] = XYM_MAX_BIP32_PATH + 1;
     bip32PathLength = buffer_get_bip32_path(&buffer, bip32Path);
     assert_int_equal(bip32PathLength, 0);
 }
@@ -31,10 +31,10 @@ static void test_bip32_length_limits(void** state) {
 static void test_bip32_conversion(void** state) {
     (void) state;
 
-    uint8_t data[1 + MAX_BIP32_PATH * 4] = {5, 1, 0, 0, 0, 2, 0, 0, 0, 3, 0,
+    uint8_t data[1 + XYM_MAX_BIP32_PATH * 4] = {5, 1, 0, 0, 0, 2, 0, 0, 0, 3, 0,
                                             0, 0, 4, 0, 0, 0, 5, 0, 0, 0};
-    uint32_t bip32Path[MAX_BIP32_PATH];
-    const buffer_t buffer = {data, MAX_BIP32_PATH * 4, 0};
+    uint32_t bip32Path[XYM_MAX_BIP32_PATH];
+    const buffer_t buffer = {data, XYM_MAX_BIP32_PATH * 4, 0};
 
     // test bip32 conversion
     uint8_t bip32PathLength = buffer_get_bip32_path(&buffer, bip32Path);

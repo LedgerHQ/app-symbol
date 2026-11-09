@@ -27,10 +27,10 @@ const uint8_t* buffer_offset_ptr_and_seek(buffer_t* buffer, size_t n) {
     return out;
 }
 
-uint8_t buffer_get_bip32_path(const buffer_t* buffer, uint32_t bip32Path[MAX_BIP32_PATH]) {
+uint8_t buffer_get_bip32_path(const buffer_t* buffer, uint32_t bip32Path[XYM_MAX_BIP32_PATH]) {
     // check that bip32 path length is correct
     uint8_t bip32PathLength = buffer->ptr[0];
-    if ((bip32PathLength < 1) || (bip32PathLength > MAX_BIP32_PATH)) {
+    if ((bip32PathLength < 1) || (bip32PathLength > XYM_MAX_BIP32_PATH)) {
         return 0;
     }
 

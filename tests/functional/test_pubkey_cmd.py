@@ -3,10 +3,7 @@ from ragger.navigator.navigation_scenario import NavigateWithScenario
 from ragger.error import ExceptionRAPDU
 
 from apps.symbol import SymbolClient, ErrorType
-from utils import ROOT_SCREENSHOT_PATH
-
-# Proposed XYM derivation paths for tests ###
-SYMBOL_PATH = "m/44'/4343'/0'/0'/0'"
+from utils import ROOT_SCREENSHOT_PATH, SYMBOL_PATH
 
 SPECULOS_EXPECTED_PUBLIC_KEY = "73f0bf90d39d1d0a3ec03740eec95c12"\
                                "7a82a20bf07f6840462125a94a42df1e"

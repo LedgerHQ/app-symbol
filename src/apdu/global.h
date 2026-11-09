@@ -37,7 +37,7 @@ typedef enum {
 
 typedef struct {
     uint8_t pathLength;
-    uint32_t bip32Path[MAX_BIP32_PATH];
+    uint32_t bip32Path[XYM_MAX_BIP32_PATH];
     uint8_t rawTx[MAX_RAW_TX];
     uint32_t rawTxLength;
     uint8_t curve;
